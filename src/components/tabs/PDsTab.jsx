@@ -1,5 +1,6 @@
 import React, { useState } from 'react'
 import useCharacterStore from '../../store/useCharacterStore'
+import { getCatData, HABILIDADES_SECUNDARIAS } from '../../data/tables'
 
 const F = ({ label, children, w = 'flex-1' }) => (
   <div className={`${w} flex flex-col gap-0.5`}>
@@ -20,10 +21,41 @@ const SKILLS_SEC = ['Acrobacias', 'Atletismo', 'Montar', 'Nadar', 'Trepar', 'Sal
   'Cerrajería', 'Disfraz', 'Ocultarse', 'Robo', 'Sigilo', 'Trampería', 'Venenos',
   'Arte', 'Baile', 'Forja', 'Música', 'T. Manos']
 
+// Map skill names to their category cost key
+const SKILL_COST_KEY = {
+  'H. Ataque': 'CosteHA', 'H. Esquiva': 'CosteHE', 'H. Parada': 'CosteHP',
+  'Llevar Armadura': 'CosteLL_Armor', 'Tablas de Armas': 'CosteHA',
+  'Tablas de Estilos': 'CosteHA', 'Artes Marciales': 'CosteHA',
+  'CM': 'CosteKi',
+  'Zeón': 'CosteZeon', 'Nivel de Magia': 'CosteZeon',
+  'Proyección Mágica': 'CosteProy_Mag',
+  'Convocar': 'CosteConvocar', 'Dominar': 'CosteDominar',
+  'Atar': 'CosteAtar', 'Desconvocar': 'CosteDesconv',
+  'CVs': 'CosteCV', 'Proyección Psíquica': 'CosteProy_Psi',
+}
+// Skill-category cost map for secondary skills
+const SEC_CAT_KEY = {
+  'Atléticas': 'CosteAtleticas', 'Sociales': 'CosteSociales',
+  'Percepción': 'CostePercepc', 'Intelectuales': 'CosteIntelectu',
+  'Vigor': 'CosteVigor', 'Subterfugio': 'CosteSubter', 'Creativas': 'CosteCreativa',
+}
+// Map each secondary skill to its category's cost key
+const SEC_SKILL_COST_KEY = {}
+Object.entries(HABILIDADES_SECUNDARIAS).forEach(([cat, habs]) => {
+  Object.keys(habs).forEach(skill => { SEC_SKILL_COST_KEY[skill] = SEC_CAT_KEY[cat] })
+})
+// Ki points and accumulation use different costs
+SKILLS_KI.forEach(s => { SKILL_COST_KEY[s] = s.includes('Acum') ? 'CosteAcuKi' : 'CosteKi' })
+
 export default function PDsTab({ char }) {
   const updateField = useCharacterStore(s => s.updateField)
   const set = (path, val) => updateField(char.id, path, val)
   const [activeNivel, setActiveNivel] = useState(1)
+
+  const catData = getCatData(char.categoria)
+  const getCost = (key) => catData[key] || 2
+  const getSkillCost = (skill) => getCost(SKILL_COST_KEY[skill] || 'CosteHA')
+  const getSecCost = (skill) => getCost(SEC_SKILL_COST_KEY[skill] || 'CosteAtleticas')
 
   const pds = char.pds || {}
   const niveles = pds.niveles || []
@@ -52,15 +84,15 @@ export default function PDsTab({ char }) {
     set('pds.niveles', list)
   }
 
-  // Total PDs gastados en nivel activo
+  // Total PDs gastados en nivel activo (puntos × coste por punto)
   const calcTotalGastadoNivel = () => {
     let total = 0
     const n = nivel
-    SKILLS_COMBATE.forEach(s => { total += parseInt(n.combate?.[s]) || 0 })
-    SKILLS_KI.forEach(s => { total += parseInt(n.ki?.[s]) || 0 })
-    SKILLS_MISTICO.forEach(s => { total += parseInt(n.mistico?.[s]) || 0 })
-    SKILLS_PSIQUICO.forEach(s => { total += parseInt(n.psiquico?.[s]) || 0 })
-    SKILLS_SEC.forEach(s => { total += parseInt(n.secundarias?.[s]) || 0 })
+    SKILLS_COMBATE.forEach(s => { total += (parseInt(n.combate?.[s]) || 0) * getSkillCost(s) })
+    SKILLS_KI.forEach(s => { total += (parseInt(n.ki?.[s]) || 0) * getSkillCost(s) })
+    SKILLS_MISTICO.forEach(s => { total += (parseInt(n.mistico?.[s]) || 0) * getSkillCost(s) })
+    SKILLS_PSIQUICO.forEach(s => { total += (parseInt(n.psiquico?.[s]) || 0) * getSkillCost(s) })
+    SKILLS_SEC.forEach(s => { total += (parseInt(n.secundarias?.[s]) || 0) * getSecCost(s) })
     total += parseInt(n.caracteristicas?.pdsGastados) || 0
     return total
   }
@@ -159,14 +191,23 @@ export default function PDsTab({ char }) {
             {/* Combate */}
             <div className="panel">
               <div className="panel-title">Combate</div>
-              <div className="p-2 flex flex-col gap-1">
-                {SKILLS_COMBATE.map(s => (
-                  <div key={s} className="flex items-center gap-1">
-                    <span className="field-label flex-1 text-xs">{s}</span>
-                    <input type="number" className="w-14 text-center" value={nivel.combate?.[s] ?? 0}
-                      onChange={e => updNivelSkill('combate', s, e.target.value)} />
-                  </div>
-                ))}
+              <div className="p-1 flex flex-col gap-0.5">
+                <div className="flex text-[#4a3520] text-xs px-1">
+                  <span className="flex-1">Habilidad</span><span className="w-8 text-center">×</span><span className="w-10 text-center">Pts</span><span className="w-10 text-center">PDs</span>
+                </div>
+                {SKILLS_COMBATE.map(s => {
+                  const pts = parseInt(nivel.combate?.[s]) || 0
+                  const cost = getSkillCost(s)
+                  return (
+                    <div key={s} className="flex items-center gap-1">
+                      <span className="field-label flex-1 text-xs">{s}</span>
+                      <span className="w-8 text-center text-[#4a3520] text-xs">×{cost}</span>
+                      <input type="number" className="w-10 text-center text-xs" value={pts}
+                        onChange={e => updNivelSkill('combate', s, e.target.value)} />
+                      <span className="w-10 text-center text-[#c9a84c] text-xs font-bold">{pts * cost}</span>
+                    </div>
+                  )
+                })}
               </div>
             </div>
 
@@ -174,38 +215,56 @@ export default function PDsTab({ char }) {
             <div className="flex flex-col gap-2">
               <div className="panel">
                 <div className="panel-title">Ki</div>
-                <div className="p-2 flex flex-col gap-1">
-                  {SKILLS_KI.map(s => (
-                    <div key={s} className="flex items-center gap-1">
-                      <span className="field-label flex-1 text-xs">{s}</span>
-                      <input type="number" className="w-14 text-center" value={nivel.ki?.[s] ?? 0}
-                        onChange={e => updNivelSkill('ki', s, e.target.value)} />
-                    </div>
-                  ))}
+                <div className="p-1 flex flex-col gap-0.5">
+                  {SKILLS_KI.map(s => {
+                    const pts = parseInt(nivel.ki?.[s]) || 0
+                    const cost = getSkillCost(s)
+                    return (
+                      <div key={s} className="flex items-center gap-1">
+                        <span className="field-label flex-1 text-xs">{s}</span>
+                        <span className="w-6 text-center text-[#4a3520] text-xs">×{cost}</span>
+                        <input type="number" className="w-10 text-center text-xs" value={pts}
+                          onChange={e => updNivelSkill('ki', s, e.target.value)} />
+                        <span className="w-10 text-center text-[#c9a84c] text-xs font-bold">{pts * cost}</span>
+                      </div>
+                    )
+                  })}
                 </div>
               </div>
               <div className="panel">
                 <div className="panel-title">Místico</div>
-                <div className="p-2 flex flex-col gap-1">
-                  {SKILLS_MISTICO.map(s => (
-                    <div key={s} className="flex items-center gap-1">
-                      <span className="field-label flex-1 text-xs">{s}</span>
-                      <input type="number" className="w-14 text-center" value={nivel.mistico?.[s] ?? 0}
-                        onChange={e => updNivelSkill('mistico', s, e.target.value)} />
-                    </div>
-                  ))}
+                <div className="p-1 flex flex-col gap-0.5">
+                  {SKILLS_MISTICO.map(s => {
+                    const pts = parseInt(nivel.mistico?.[s]) || 0
+                    const cost = getSkillCost(s)
+                    return (
+                      <div key={s} className="flex items-center gap-1">
+                        <span className="field-label flex-1 text-xs">{s}</span>
+                        <span className="w-6 text-center text-[#4a3520] text-xs">×{cost}</span>
+                        <input type="number" className="w-10 text-center text-xs" value={pts}
+                          onChange={e => updNivelSkill('mistico', s, e.target.value)} />
+                        <span className="w-10 text-center text-[#c9a84c] text-xs font-bold">{pts * cost}</span>
+                      </div>
+                    )
+                  })}
                 </div>
               </div>
               <div className="panel">
                 <div className="panel-title">Psíquico</div>
-                <div className="p-2 flex flex-col gap-1">
-                  {SKILLS_PSIQUICO.map(s => (
-                    <div key={s} className="flex items-center gap-1">
-                      <span className="field-label flex-1 text-xs">{s}</span>
-                      <input type="number" className="w-14 text-center" value={nivel.psiquico?.[s] ?? 0}
-                        onChange={e => updNivelSkill('psiquico', s, e.target.value)} />
-                    </div>
-                  ))}
+                <div className="p-1 flex flex-col gap-0.5">
+                  {SKILLS_PSIQUICO.map(s => {
+                    const pts = parseInt(nivel.psiquico?.[s]) || 0
+                    const cost = getSkillCost(s)
+                    return (
+                      <div key={s} className="flex items-center gap-1">
+                        <span className="field-label flex-1 text-xs">{s}</span>
+                        <span className="w-6 text-center text-[#4a3520] text-xs">×{cost}</span>
+                        <input type="number" className="w-10 text-center text-xs" value={pts}
+                          onChange={e => updNivelSkill('psiquico', s, e.target.value)} />
+                        <span className="w-10 text-center text-[#c9a84c] text-xs font-bold">{pts * cost}</span>
+                      </div>
+                    )
+                  })}
                 </div>
                 <div className="p-2 border-t border-[#4a3520]">
                   <div className="flex items-center gap-1">
@@ -227,28 +286,40 @@ export default function PDsTab({ char }) {
             {/* Secundarias 1ª mitad */}
             <div className="panel">
               <div className="panel-title">Habilidades Sec. (1/2)</div>
-              <div className="p-2 flex flex-col gap-1 overflow-y-auto max-h-96">
-                {SKILLS_SEC.slice(0, Math.ceil(SKILLS_SEC.length / 2)).map(s => (
-                  <div key={s} className="flex items-center gap-1">
-                    <span className="field-label flex-1 text-xs">{s}</span>
-                    <input type="number" className="w-14 text-center" value={nivel.secundarias?.[s] ?? 0}
-                      onChange={e => updNivelSec(s, e.target.value)} />
-                  </div>
-                ))}
+              <div className="p-1 flex flex-col gap-0.5 overflow-y-auto max-h-96">
+                {SKILLS_SEC.slice(0, Math.ceil(SKILLS_SEC.length / 2)).map(s => {
+                  const pts = parseInt(nivel.secundarias?.[s]) || 0
+                  const cost = getSecCost(s)
+                  return (
+                    <div key={s} className="flex items-center gap-1">
+                      <span className="field-label flex-1 text-xs">{s}</span>
+                      <span className="w-6 text-center text-[#4a3520] text-xs">×{cost}</span>
+                      <input type="number" className="w-10 text-center text-xs" value={pts}
+                        onChange={e => updNivelSec(s, e.target.value)} />
+                      <span className="w-10 text-center text-[#c9a84c] text-xs font-bold">{pts * cost}</span>
+                    </div>
+                  )
+                })}
               </div>
             </div>
 
             {/* Secundarias 2ª mitad */}
             <div className="panel">
               <div className="panel-title">Habilidades Sec. (2/2)</div>
-              <div className="p-2 flex flex-col gap-1 overflow-y-auto max-h-96">
-                {SKILLS_SEC.slice(Math.ceil(SKILLS_SEC.length / 2)).map(s => (
-                  <div key={s} className="flex items-center gap-1">
-                    <span className="field-label flex-1 text-xs">{s}</span>
-                    <input type="number" className="w-14 text-center" value={nivel.secundarias?.[s] ?? 0}
-                      onChange={e => updNivelSec(s, e.target.value)} />
-                  </div>
-                ))}
+              <div className="p-1 flex flex-col gap-0.5 overflow-y-auto max-h-96">
+                {SKILLS_SEC.slice(Math.ceil(SKILLS_SEC.length / 2)).map(s => {
+                  const pts = parseInt(nivel.secundarias?.[s]) || 0
+                  const cost = getSecCost(s)
+                  return (
+                    <div key={s} className="flex items-center gap-1">
+                      <span className="field-label flex-1 text-xs">{s}</span>
+                      <span className="w-6 text-center text-[#4a3520] text-xs">×{cost}</span>
+                      <input type="number" className="w-10 text-center text-xs" value={pts}
+                        onChange={e => updNivelSec(s, e.target.value)} />
+                      <span className="w-10 text-center text-[#c9a84c] text-xs font-bold">{pts * cost}</span>
+                    </div>
+                  )
+                })}
               </div>
             </div>
           </div>
