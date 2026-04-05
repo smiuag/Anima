@@ -1,5 +1,5 @@
 import React, { useState } from 'react'
-import useCharacterStore from '../store/useCharacterStore'
+import useAppStore from '../store/useAppStore'
 import GeneralTab from './tabs/GeneralTab'
 import PrincipalTab from './tabs/PrincipalTab'
 import CombateTab from './tabs/CombateTab'
@@ -20,61 +20,63 @@ const TABS = [
   { id: 'personalizacion', label: 'Personalización' },
 ]
 
-export default function CharacterSheet({ char, onBack }) {
+export default function CharacterSheet() {
+  const { activePersonajeDatos, backToPartida, savePersonaje, saveStatus } = useAppStore()
   const [activeTab, setActiveTab] = useState('general')
-  const { exportCharacter } = useCharacterStore()
+
+  if (!activePersonajeDatos) return null
+
+  // Tab components use useCharacterStore(s => s.updateField) which bridges to useAppStore
+  // We pass char as the current datos — id is a dummy since updateField ignores it
+  const char = { ...activePersonajeDatos, id: '__cloud__' }
 
   const renderTab = () => {
     switch (activeTab) {
-      case 'general': return <GeneralTab char={char} />
-      case 'principal': return <PrincipalTab char={char} />
-      case 'combate': return <CombateTab char={char} />
-      case 'ki': return <KiTab char={char} />
-      case 'misticos': return <MisticosTab char={char} />
-      case 'psiquicos': return <PsiquicosTab char={char} />
-      case 'pds': return <PDsTab char={char} />
-      case 'personalizacion': return <PersonalizacionTab char={char} />
+      case 'general':        return <GeneralTab char={char} />
+      case 'principal':      return <PrincipalTab char={char} />
+      case 'combate':        return <CombateTab char={char} />
+      case 'ki':             return <KiTab char={char} />
+      case 'misticos':       return <MisticosTab char={char} />
+      case 'psiquicos':      return <PsiquicosTab char={char} />
+      case 'pds':            return <PDsTab char={char} />
+      case 'personalizacion':return <PersonalizacionTab char={char} />
       default: return null
     }
   }
+
+  const saveLabel = saveStatus === 'saving' ? '💾 Guardando...'
+    : saveStatus === 'saved'   ? '✓ Guardado'
+    : saveStatus === 'error'   ? '✗ Error'
+    : null
 
   return (
     <div className="flex flex-col h-screen overflow-hidden">
       {/* Header */}
       <div className="bg-[#1e180f] border-b border-[#4a3520] px-3 py-2 flex items-center gap-3 no-print">
-        <button className="btn-secondary" onClick={onBack}>← Personajes</button>
+        <button className="btn-secondary" onClick={backToPartida}>← Personajes</button>
         <div className="flex items-center gap-2 flex-1">
           <span className="text-[#c9a84c] font-bold text-sm">
             {char.nombre || 'Sin nombre'}
           </span>
-          {char.categoria && (
-            <span className="text-[#8a7560] text-xs">{char.categoria}</span>
-          )}
-          {char.nivel > 0 && (
-            <span className="text-[#8a7560] text-xs">Nv. {char.nivel}</span>
-          )}
-          {char.raza && char.raza !== 'Humano' && (
-            <span className="text-[#8a7560] text-xs">· {char.raza}</span>
-          )}
+          {char.categoria && <span className="text-[#8a7560] text-xs">{char.categoria}</span>}
+          {char.nivel > 0  && <span className="text-[#8a7560] text-xs">Nv. {char.nivel}</span>}
+          {char.raza && char.raza !== 'Humano' && <span className="text-[#8a7560] text-xs">· {char.raza}</span>}
         </div>
-        <div className="flex gap-2">
-          <button className="btn-secondary" onClick={() => exportCharacter(char.id)}>
-            Exportar JSON
-          </button>
-          <button className="btn-secondary" onClick={() => window.print()}>
-            Imprimir
-          </button>
-        </div>
+        {saveLabel && (
+          <span className={`text-xs ${saveStatus === 'saved' ? 'text-green-400' : saveStatus === 'error' ? 'text-red-400' : 'text-[#8a7560]'}`}>
+            {saveLabel}
+          </span>
+        )}
+        <button className="btn-primary" onClick={savePersonaje}>💾 Guardar</button>
+        <button className="btn-secondary" onClick={() => window.print()}>Imprimir</button>
       </div>
 
-      {/* Tab bar */}
+      {/* Tabs */}
       <div className="bg-[#1a1410] border-b border-[#4a3520] flex overflow-x-auto no-print">
         {TABS.map(tab => (
-          <button
-            key={tab.id}
+          <button key={tab.id}
             className={activeTab === tab.id ? 'tab-btn-active' : 'tab-btn-inactive'}
-            onClick={() => setActiveTab(tab.id)}
-          >
+            onClick={() => setActiveTab(tab.id)}>
             {tab.label}
           </button>
         ))}

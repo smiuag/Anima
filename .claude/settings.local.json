@@ -12,7 +12,8 @@
       "Bash(gh auth:*)",
       "Bash(git config:*)",
       "Bash(git credential-manager:*)",
-      "Bash(git credential:*)"
+      "Bash(git credential:*)",
+      "Bash(curl -s -X POST https://api.jsonbin.io/v3/b -H 'Content-Type: application/json' -H 'X-Master-Key: $2a$10$E41j9DQeBOEUkF9bjYDzq.Bsbu2qWOM6bjieUsYFFl0w5WKdC4J1u' -H 'X-Bin-Name: anima-index' -H 'X-Bin-Private: true' -d '{\"partidas\":[]}')"
     ]
   }
 }
