@@ -1,0 +1,101 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  * { box-sizing: border-box; }
+  body {
+    background-color: #1a1410;
+    color: #e8d5b0;
+    font-family: 'Segoe UI', system-ui, sans-serif;
+    font-size: 13px;
+  }
+  input, select, textarea {
+    background: #2a2018 !important;
+    color: #e8d5b0 !important;
+    border: 1px solid #4a3520 !important;
+    border-radius: 3px;
+    padding: 2px 5px;
+    outline: none;
+    width: 100%;
+  }
+  input:focus, select:focus, textarea:focus {
+    border-color: #c9a84c !important;
+    box-shadow: 0 0 0 1px #c9a84c40;
+  }
+  input[type="number"] { text-align: right; }
+  select option { background: #2a2018; }
+}
+
+@layer components {
+  .panel {
+    @apply bg-[#231d17] border border-[#4a3520] rounded;
+  }
+  .panel-title {
+    @apply text-[#c9a84c] font-bold text-xs uppercase tracking-wider px-2 py-1 bg-[#1e180f] border-b border-[#4a3520];
+  }
+  .field-label {
+    @apply text-[#8a7560] text-xs whitespace-nowrap;
+  }
+  .field-row {
+    @apply flex items-center gap-1 px-2 py-0.5;
+  }
+  .calc-value {
+    @apply bg-[#1a1410] text-[#c9a84c] font-bold text-right px-1 rounded border border-[#4a3520] min-w-[40px] text-center;
+  }
+  .tab-btn {
+    @apply px-3 py-1.5 text-xs font-medium border-b-2 transition-colors cursor-pointer;
+  }
+  .tab-btn-active {
+    @apply tab-btn text-[#c9a84c] border-[#c9a84c] bg-[#231d17];
+  }
+  .tab-btn-inactive {
+    @apply tab-btn text-[#8a7560] border-transparent hover:text-[#e8d5b0] hover:border-[#4a3520];
+  }
+  .btn {
+    @apply px-3 py-1 text-xs rounded border cursor-pointer font-medium transition-colors;
+  }
+  .btn-primary {
+    @apply btn bg-[#c9a84c] text-[#1a1410] border-[#c9a84c] hover:bg-[#e8c87a];
+  }
+  .btn-secondary {
+    @apply btn bg-[#231d17] text-[#e8d5b0] border-[#4a3520] hover:border-[#c9a84c] hover:text-[#c9a84c];
+  }
+  .btn-danger {
+    @apply btn bg-[#231d17] text-[#8b1a1a] border-[#8b1a1a] hover:bg-[#8b1a1a] hover:text-white;
+  }
+  .table-header {
+    @apply text-[#c9a84c] text-xs font-bold bg-[#1e180f] px-1 py-0.5 border-b border-[#4a3520];
+  }
+  .table-cell {
+    @apply px-1 py-0.5 border-b border-[#2a2018];
+  }
+  .add-row-btn {
+    @apply text-[#4a3520] hover:text-[#c9a84c] text-xs cursor-pointer px-2 py-0.5 transition-colors;
+  }
+  /* Calculated fields (read-only) */
+  .calc-input {
+    background: #1a1410 !important;
+    color: #c9a84c !important;
+    font-weight: bold;
+    text-align: center;
+    cursor: default;
+  }
+}
+
+/* Scrollbar */
+::-webkit-scrollbar { width: 6px; height: 6px; }
+::-webkit-scrollbar-track { background: #1a1410; }
+::-webkit-scrollbar-thumb { background: #4a3520; border-radius: 3px; }
+::-webkit-scrollbar-thumb:hover { background: #c9a84c; }
+
+/* Print */
+@media print {
+  .no-print { display: none !important; }
+  body { background: white; color: black; font-size: 10px; }
+  .panel { border-color: #ccc; background: white; page-break-inside: avoid; }
+  .panel-title { color: #333; background: #f5f5f5; }
+  input, select, textarea { background: transparent !important; color: black !important; border: 1px solid #ccc !important; }
+  .calc-value, .calc-input { color: #333 !important; background: #eee !important; }
+  .tab-content { display: block !important; }
+}
