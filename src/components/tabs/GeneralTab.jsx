@@ -1,5 +1,8 @@
 import React from 'react'
 import useCharacterStore from '../../store/useCharacterStore'
+import { CATEGORIAS_DATA, RAZAS } from '../../data/tables'
+
+const CATEGORIAS_LIST = Object.keys(CATEGORIAS_DATA)
 
 const F = ({ label, children, w = 'flex-1' }) => (
   <div className={`${w} flex flex-col gap-0.5`}>
@@ -34,11 +37,22 @@ export default function GeneralTab({ char }) {
           <div className="p-2 flex flex-col gap-2">
             <Row>
               <F label="Nombre" w="flex-[2]"><input value={char.nombre || ''} onChange={e => set('nombre', e.target.value)} /></F>
-              <F label="Categoría"><input value={char.categoria || ''} onChange={e => set('categoria', e.target.value)} /></F>
+              <F label="Categoría">
+                <select value={char.categoria || ''} onChange={e => set('categoria', e.target.value)}
+                  className="w-full bg-[#1a1410] border border-[#4a3520] text-[#e8d5b0] rounded px-2 py-1 text-sm">
+                  <option value="">— Sin categoría —</option>
+                  {CATEGORIAS_LIST.map(c => <option key={c} value={c}>{c}</option>)}
+                </select>
+              </F>
               <F label="Nivel" w="w-16"><input type="number" value={char.nivel || 0} onChange={e => set('nivel', +e.target.value)} /></F>
             </Row>
             <Row>
-              <F label="Raza"><input value={char.raza || ''} onChange={e => set('raza', e.target.value)} /></F>
+              <F label="Raza">
+                <select value={char.raza || 'Humano'} onChange={e => set('raza', e.target.value)}
+                  className="w-full bg-[#1a1410] border border-[#4a3520] text-[#e8d5b0] rounded px-2 py-1 text-sm">
+                  {RAZAS.map(r => <option key={r} value={r}>{r}</option>)}
+                </select>
+              </F>
               <F label="Sexo"><input value={char.sexo || ''} onChange={e => set('sexo', e.target.value)} /></F>
               <F label="Origen"><input value={char.origen || ''} onChange={e => set('origen', e.target.value)} /></F>
             </Row>

@@ -1,6 +1,7 @@
 import React from 'react'
 import useCharacterStore from '../../store/useCharacterStore'
-import { getBonoCaracteristica, MOVIMIENTO_AGI, REGENERACION_CON, HABILIDADES_SECUNDARIAS } from '../../data/tables'
+import { getBonoCaracteristica, MOVIMIENTO_AGI, REGENERACION_CON, HABILIDADES_SECUNDARIAS,
+         TAMANOS, getTamano, getCatData, PV_BASE_CON } from '../../data/tables'
 
 const F = ({ label, children, w = 'flex-1' }) => (
   <div className={`${w} flex flex-col gap-0.5`}>
@@ -30,6 +31,9 @@ export default function PrincipalTab({ char }) {
     set(`caracteristicas.${stat}.${field}`, val === '' ? '' : +val)
   }
 
+  // Category data (auto-derived from categoria)
+  const catData = getCatData(char.categoria)
+
   // Regeneración por CON
   const conTotal = calcTotal('CON')
   const regenIdx = REGENERACION_CON[Math.min(Math.max(conTotal, 1), 20)] ?? 0
@@ -38,15 +42,27 @@ export default function PrincipalTab({ char }) {
   const agiTotal = calcTotal('AGI')
   const movTexto = MOVIMIENTO_AGI[Math.min(Math.max(agiTotal, 1), 20)] || '35 m/asalto'
 
-  // Turno
+  // Tamaño (base para el turno)
+  const fueTotal = calcTotal('FUE')
+  const tamano = getTamano(fueTotal, conTotal)
+  const turnoBase = tamano.turnoBase
+
+  // Turno (PlusTurno de categoría es el bono de iniciativa de la categoría)
   const turno = char.turno || {}
-  const turnoTotal = 40 +
+  const catPlusTurno = catData.PlusTurno || 0
+  const turnoTotal = turnoBase +
     calcBono('AGI') +
     calcBono('DES') +
-    (parseInt(turno.boniCat) || 0) +
+    catPlusTurno +
     (parseInt(turno.penArmad) || 0) +
     (parseInt(turno.boniArma) || 20) +
     (parseInt(turno.esp) || 0)
+
+  // PV auto-calculated: PV_BASE_CON[CON] + PlusPV × nivel
+  const pvBase = PV_BASE_CON[Math.min(Math.max(conTotal, 1), 20)] ?? 20
+  const nivel = parseInt(char.nivel) || 0
+  const catPlusPV = catData.PlusPV || 0
+  const pvCalculado = pvBase + catPlusPV * nivel + (parseInt(char.puntosVida?.esp) || 0)
 
   const habSec = char.habilidadesSecundarias || {}
 
@@ -119,12 +135,15 @@ export default function PrincipalTab({ char }) {
         <div className="panel">
           <div className="panel-title">Puntos de Vida</div>
           <div className="p-2 flex flex-col gap-1">
-            <div className="flex gap-2">
-              <F label="Base"><input type="number" value={char.puntosVida?.base ?? 20} onChange={e => set('puntosVida.base', +e.target.value)} /></F>
-              <F label="Total"><input type="number" value={char.puntosVida?.total ?? 20} onChange={e => set('puntosVida.total', +e.target.value)} /></F>
-              <F label="Actual"><input type="number" value={char.puntosVida?.actual ?? 20} onChange={e => set('puntosVida.actual', +e.target.value)} /></F>
+            <div className="flex gap-2 text-xs">
+              <div className="flex-1">
+                <div className="field-label">Calculado</div>
+                <div className="calc-input text-center rounded px-1 font-bold text-[#c9a84c]">{pvCalculado}</div>
+                <div className="text-[#4a3520] text-center mt-0.5">CON:{pvBase} +{catPlusPV}×Nv{nivel}</div>
+              </div>
+              <F label="Esp."><input type="number" value={char.puntosVida?.esp ?? 0} onChange={e => set('puntosVida.esp', +e.target.value)} /></F>
+              <F label="Actual"><input type="number" value={char.puntosVida?.actual ?? pvCalculado} onChange={e => set('puntosVida.actual', +e.target.value)} /></F>
             </div>
-            <F label="Esp."><input value={char.puntosVida?.esp || ''} onChange={e => set('puntosVida.esp', e.target.value)} /></F>
           </div>
         </div>
 
@@ -213,10 +232,10 @@ export default function PrincipalTab({ char }) {
           <div className="panel-title">Turno</div>
           <table className="w-full text-xs">
             <tbody>
-              <tr><td className="table-cell field-label pl-2">Base</td><td className="table-cell text-center text-[#c9a84c] font-bold">40</td></tr>
+              <tr><td className="table-cell field-label pl-2">Base (Tamaño: {tamano.nombre})</td><td className="table-cell"><span className="calc-input block text-center">{turnoBase}</span></td></tr>
               <tr><td className="table-cell field-label pl-2">AGI (Bono)</td><td className="table-cell"><span className="calc-input block text-center">{calcBono('AGI')}</span></td></tr>
               <tr><td className="table-cell field-label pl-2">DES (Bono)</td><td className="table-cell"><span className="calc-input block text-center">{calcBono('DES')}</span></td></tr>
-              <tr><td className="table-cell field-label pl-2">Bono Categoría</td><td className="table-cell"><input type="number" className="w-full text-center" value={turno.boniCat ?? 0} onChange={e => set('turno.boniCat', +e.target.value)} /></td></tr>
+              <tr><td className="table-cell field-label pl-2">Bono Categoría {char.categoria ? `(${char.categoria})` : ''}</td><td className="table-cell"><span className="calc-input block text-center">{catPlusTurno}</span></td></tr>
               <tr><td className="table-cell field-label pl-2">Pen. Armadura</td><td className="table-cell"><input type="number" className="w-full text-center" value={turno.penArmad ?? 0} onChange={e => set('turno.penArmad', +e.target.value)} /></td></tr>
               <tr><td className="table-cell field-label pl-2">Bono Arma</td><td className="table-cell"><input type="number" className="w-full text-center" value={turno.boniArma ?? 20} onChange={e => set('turno.boniArma', +e.target.value)} /></td></tr>
               <tr><td className="table-cell field-label pl-2">Esp.</td><td className="table-cell"><input type="number" className="w-full text-center" value={turno.esp ?? 0} onChange={e => set('turno.esp', +e.target.value)} /></td></tr>
@@ -255,6 +274,30 @@ export default function PrincipalTab({ char }) {
             </div>
           </div>
         </div>
+
+        {/* Límites y bonos de Categoría */}
+        {char.categoria && (
+          <div className="panel">
+            <div className="panel-title">Límites de Categoría — {char.categoria}</div>
+            <div className="p-2 grid grid-cols-2 gap-x-3 gap-y-1 text-xs">
+              {[
+                ['Límite Combate', Math.round((catData['Limite Combate'] || 0.5) * 100) + '%'],
+                ['Límite Magia',   Math.round((catData['Limite Magia']   || 0.5) * 100) + '%'],
+                ['Límite Psi',     Math.round((catData['Limite Psi']     || 0.5) * 100) + '%'],
+                ['+PV/nivel',      catData.PlusPV || 0],
+                ['+CM/nivel',      catData.PlusCM || 0],
+                ['+Zeon base',     catData.PlusZeon || 0],
+                ['ACT base',       catData.ACT || 0],
+                ['+CV/nivel',      catData.PlusCV != null ? (catData.PlusCV * 3).toFixed(0) : '—'],
+              ].map(([label, val]) => (
+                <div key={label} className="flex justify-between">
+                  <span className="text-[#8a7560]">{label}</span>
+                  <span className="text-[#c9a84c] font-bold">{val}</span>
+                </div>
+              ))}
+            </div>
+          </div>
+        )}
 
         {/* Ajustes de Nivel */}
         <div className="panel">
