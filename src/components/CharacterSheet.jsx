@@ -1,5 +1,6 @@
 import React, { useState } from 'react'
 import useAppStore from '../store/useAppStore'
+import { exportarFichaPDF } from '../services/pdfExport'
 import GeneralTab from './tabs/GeneralTab'
 import PrincipalTab from './tabs/PrincipalTab'
 import CombateTab from './tabs/CombateTab'
@@ -23,6 +24,16 @@ const TABS = [
 export default function CharacterSheet() {
   const { activePersonajeDatos, backToPartida, savePersonaje, saveStatus } = useAppStore()
   const [activeTab, setActiveTab] = useState('general')
+  const [exporting, setExporting] = useState(false)
+
+  const handleExportPDF = async () => {
+    setExporting(true)
+    try {
+      await exportarFichaPDF(activePersonajeDatos)
+    } finally {
+      setExporting(false)
+    }
+  }
 
   if (!activePersonajeDatos) return null
 
@@ -68,6 +79,9 @@ export default function CharacterSheet() {
           </span>
         )}
         <button className="btn-primary" onClick={savePersonaje}>💾 Guardar</button>
+        <button className="btn-secondary" onClick={handleExportPDF} disabled={exporting}>
+          {exporting ? 'Generando...' : '📄 PDF oficial'}
+        </button>
         <button className="btn-secondary" onClick={() => window.print()}>Imprimir</button>
       </div>
 
