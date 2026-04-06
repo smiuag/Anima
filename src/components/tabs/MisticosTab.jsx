@@ -79,117 +79,109 @@ export default function MisticosTab({ char }) {
 
   return (
     <div className="flex flex-col gap-3 p-3">
-      {/* ── Zeón y Proyección ── */}
-      <div className="grid grid-cols-3 gap-3">
-        <div className="panel">
-          <div className="panel-title">Zeón</div>
-          <div className="p-2 flex flex-col gap-2">
-            <div className="flex gap-2 items-end">
-              <F label="Total (calc.)">
-                <div className="calc-value">{zeonCalculadoFinal}</div>
-              </F>
-              <F label="Esp.">
-                <input type="number" value={mis.zeon?.esp ?? 0} onChange={e => set('misticos.zeon.esp', +e.target.value)} />
-              </F>
-              <F label="Usado">
-                <input type="number" value={mis.zeon?.usado ?? 0} onChange={e => set('misticos.zeon.usado', +e.target.value)} />
-              </F>
+      {/* ── Stats de Zeón / Proyección / Invocación ── */}
+      <div className="grid grid-cols-2 gap-3">
+        {/* Columna izquierda: Zeón + Proyección */}
+        <div className="flex flex-col gap-2">
+          <div className="panel mb-0">
+            <div className="panel-title">Zeón y Acumulación</div>
+            <div className="p-2 flex flex-col gap-1.5">
+              <div className="flex gap-2 items-end flex-wrap">
+                <F label="Zeón Total (calc.)" w="flex-1">
+                  <div className="calc-value text-lg">{zeonCalculadoFinal}</div>
+                </F>
+                <F label="Acum. (calc.)" w="flex-1">
+                  <div className="calc-value">{actCalculado}</div>
+                </F>
+                <F label="Esp. Zeón" w="w-20">
+                  <input type="number" value={mis.zeon?.esp ?? 0} onChange={e => set('misticos.zeon.esp', +e.target.value)} />
+                </F>
+                <F label="Usado" w="w-20">
+                  <input type="number" value={mis.zeon?.usado ?? 0} onChange={e => set('misticos.zeon.usado', +e.target.value)} />
+                </F>
+                <F label="Coste diario" w="w-24">
+                  <input type="number" value={mis.costeDiario ?? 0} onChange={e => set('misticos.costeDiario', +e.target.value)} />
+                </F>
+              </div>
+              {char.categoria && (
+                <div className="text-xs text-[#7fa8cc]">
+                  POD:{zeonBase} +{plusZeon}×Nv{nivel} +PDs:{zeonPDsUnits}×5={zeonPDs} +Esp:{zeonEsp} = {zeonCalculadoFinal}
+                </div>
+              )}
             </div>
-            {char.categoria && (
-              <div className="text-xs text-[#8a7560]">
-                POD:{zeonBase} +{plusZeon}×Nv{nivel} +PDs:{zeonPDsUnits}×5={zeonPDs} +Esp:{zeonEsp} = {zeonCalculadoFinal}
-              </div>
-            )}
-            <F label="Acumulación (calc.)">
-              <div className="flex items-center gap-2">
-                <div className="calc-value flex-1">{actCalculado}</div>
-                {char.categoria && (
-                  <span className="text-xs text-[#8a7560]">POD:{actBase}+Cat:{actCat}+PDs:{actPDs}</span>
-                )}
-              </div>
-            </F>
-            <F label="Coste Zeónico diario total">
-              <input type="number" value={mis.costeDiario ?? 0} onChange={e => set('misticos.costeDiario', +e.target.value)} />
-            </F>
           </div>
-        </div>
 
-        <div className="panel">
-          <div className="panel-title">Proyección y Nivel</div>
-          <div className="p-2 flex flex-col gap-2">
-            <div className="flex gap-1 items-end">
-              <F label="Proyección Mágica (calc.)">
-                <div className="calc-value text-center">{proyCalcBase + (parseInt(mis.proyEsp) || 0)}</div>
+          <div className="panel mb-0">
+            <div className="panel-title">Proyección y Nivel de Magia</div>
+            <div className="p-2 flex gap-2 items-end flex-wrap">
+              <F label="Proy. Mágica (calc.)" w="flex-1">
+                <div className="calc-value">{proyCalcBase + (parseInt(mis.proyEsp) || 0)}</div>
               </F>
-              <F label="Esp." w="w-16">
+              <F label="Esp." w="w-20">
                 <input type="number" value={mis.proyEsp ?? 0} onChange={e => set('misticos.proyEsp', +e.target.value)} />
               </F>
-            </div>
-            {char.categoria && proyPDsUnits > 0 && (
-              <div className="text-xs text-[#8a7560]">PDs:{proyPDsUnits}×5={proyCalcBase} +Esp:{parseInt(mis.proyEsp)||0}</div>
-            )}
-            <div className="flex gap-2">
-              <F label="Nv. Magia (PDs)">
+              <F label="Nv. Magia (PDs)" w="w-24">
                 <span className="calc-input block text-center">{nivelMagiaPDs}</span>
               </F>
-              <F label="Nv. Máx.">
+              <F label="Nv. Máx." w="w-20">
                 <input type="number" value={mis.nivelMaximo ?? 0} onChange={e => set('misticos.nivelMaximo', +e.target.value)} />
               </F>
-              <F label="Nv. Usado">
+              <F label="Nv. Usado" w="w-20">
                 <input type="number" value={mis.nivelUsado ?? 0} onChange={e => set('misticos.nivelUsado', +e.target.value)} />
               </F>
+              <F label="Nombre Verdadero" w="w-full">
+                <input value={mis.nombreVerdadero || ''} onChange={e => set('misticos.nombreVerdadero', e.target.value)} />
+              </F>
             </div>
-            <F label="Nombre Verdadero">
-              <input value={mis.nombreVerdadero || ''} onChange={e => set('misticos.nombreVerdadero', e.target.value)} />
-            </F>
           </div>
         </div>
 
-        <div className="panel">
-          <div className="panel-title">Habilidades de Invocación (calc.)</div>
-          <div className="p-2 flex flex-col gap-1 text-xs">
-            <div className="flex text-[#4a3520] text-xs px-0 mb-0.5">
-              <span className="w-24"></span><span className="w-12 text-center">PDs×5</span>
-              <span className="w-4 text-center"></span><span className="w-12 text-center">Esp.</span>
-              <span className="w-12 text-center font-bold text-[#8a7560]">Total</span>
+        {/* Columna derecha: Invocación + Configuración */}
+        <div className="flex flex-col gap-2">
+          <div className="panel mb-0">
+            <div className="panel-title">Habilidades de Invocación (calc.)</div>
+            <div className="p-2 flex flex-col gap-1 text-xs">
+              <div className="flex text-[#5580a0] text-xs mb-0.5">
+                <span className="flex-1"></span><span className="w-12 text-center">PDs×5</span>
+                <span className="w-4 text-center"></span><span className="w-14 text-center">Esp.</span>
+                <span className="w-14 text-center font-bold text-[#7fa8cc]">Total</span>
+              </div>
+              {[
+                ['Convocar',    convCalc,    'convEsp'],
+                ['Dominar',     domCalc,     'domEsp'],
+                ['Atar',        atarCalc,    'atarEsp'],
+                ['Desconvocar', desconvCalc, 'desconvEsp'],
+              ].map(([label, base, espKey]) => {
+                const esp = parseInt(mis[espKey]) || 0
+                return (
+                  <div key={label} className="flex items-center gap-1">
+                    <span className="field-label flex-1">{label}</span>
+                    <span className="calc-input w-12 text-center rounded">{base || '—'}</span>
+                    <span className="text-[#3a5070] text-xs w-4 text-center">+</span>
+                    <input type="number" className="w-14" value={mis[espKey] ?? 0}
+                      onChange={e => set(`misticos.${espKey}`, +e.target.value)} />
+                    <span className="calc-input w-14 text-center rounded font-bold text-[#f5b832]">{base + esp}</span>
+                  </div>
+                )
+              })}
             </div>
-            {[
-              ['Convocar',    convCalc,    'convEsp'],
-              ['Dominar',     domCalc,     'domEsp'],
-              ['Atar',        atarCalc,    'atarEsp'],
-              ['Desconvocar', desconvCalc, 'desconvEsp'],
-            ].map(([label, base, espKey]) => {
-              const esp = parseInt(mis[espKey]) || 0
-              return (
-                <div key={label} className="flex items-center gap-1">
-                  <span className="field-label w-24">{label}</span>
-                  <span className="calc-input w-12 text-center rounded">{base || '—'}</span>
-                  <span className="text-[#4a3520] text-xs w-4 text-center">+</span>
-                  <input type="number" className="w-12 text-center" value={mis[espKey] ?? 0}
-                    onChange={e => set(`misticos.${espKey}`, +e.target.value)} />
-                  <span className="calc-input w-12 text-center rounded font-bold text-[#c9a84c]">{base + esp}</span>
-                </div>
-              )
-            })}
           </div>
-        </div>
 
-        <div className="panel">
-          <div className="panel-title">Configuración</div>
-          <div className="p-2 flex flex-col gap-2">
-            <F label="Amplificador">
-              <input value={mis.amplificador || ''} onChange={e => set('misticos.amplificador', e.target.value)} />
-            </F>
-            <F label="Contenedor">
-              <input value={mis.contenedor || ''} onChange={e => set('misticos.contenedor', e.target.value)} />
-            </F>
-            <F label="Especialidad">
-              <input value={mis.especialidad || ''} onChange={e => set('misticos.especialidad', e.target.value)} />
-            </F>
-            <F label="Potencial Innato">
-              <input type="number" value={mis.potencialInnato ?? 0} onChange={e => set('misticos.potencialInnato', +e.target.value)} />
-            </F>
-            <div className="flex gap-2">
+          <div className="panel mb-0">
+            <div className="panel-title">Configuración</div>
+            <div className="p-2 grid grid-cols-2 gap-x-3 gap-y-1.5">
+              <F label="Amplificador">
+                <input value={mis.amplificador || ''} onChange={e => set('misticos.amplificador', e.target.value)} />
+              </F>
+              <F label="Contenedor">
+                <input value={mis.contenedor || ''} onChange={e => set('misticos.contenedor', e.target.value)} />
+              </F>
+              <F label="Especialidad">
+                <input value={mis.especialidad || ''} onChange={e => set('misticos.especialidad', e.target.value)} />
+              </F>
+              <F label="Potencial Innato">
+                <input type="number" value={mis.potencialInnato ?? 0} onChange={e => set('misticos.potencialInnato', +e.target.value)} />
+              </F>
               <F label="Conj. Activos">
                 <input type="number" value={mis.conjurosActivos ?? 0} onChange={e => set('misticos.conjurosActivos', +e.target.value)} />
               </F>
@@ -244,7 +236,7 @@ export default function MisticosTab({ char }) {
                   </td>
                 ))}
                 <td className="table-cell text-center">
-                  <button className="text-[#4a3520] hover:text-red-500 text-xs" onClick={() =>
+                  <button className="text-[#3a5070] hover:text-red-500 text-xs" onClick={() =>
                     set('misticos.vias', (mis.vias || []).filter((_, idx) => idx !== i))
                   }>✕</button>
                 </td>
@@ -301,7 +293,7 @@ export default function MisticosTab({ char }) {
                   }} />
                 </td>
                 <td className="table-cell text-center">
-                  <button className="text-[#4a3520] hover:text-red-500 text-xs" onClick={() => removeConjuro(i)}>✕</button>
+                  <button className="text-[#3a5070] hover:text-red-500 text-xs" onClick={() => removeConjuro(i)}>✕</button>
                 </td>
               </tr>
             ))}
@@ -338,7 +330,7 @@ export default function MisticosTab({ char }) {
                     }} />
                   </td>
                   <td className="table-cell text-center">
-                    <button className="text-[#4a3520] hover:text-red-500 text-xs" onClick={() =>
+                    <button className="text-[#3a5070] hover:text-red-500 text-xs" onClick={() =>
                       set('misticos.metamagia', (mis.metamagia || []).filter((_, idx) => idx !== i))
                     }>✕</button>
                   </td>
@@ -375,7 +367,7 @@ export default function MisticosTab({ char }) {
                     }} />
                   </td>
                   <td className="table-cell text-center">
-                    <button className="text-[#4a3520] hover:text-red-500 text-xs" onClick={() =>
+                    <button className="text-[#3a5070] hover:text-red-500 text-xs" onClick={() =>
                       set('misticos.poderesMisticos', (mis.poderesMisticos || []).filter((_, idx) => idx !== i))
                     }>✕</button>
                   </td>
@@ -420,7 +412,7 @@ export default function MisticosTab({ char }) {
                   </td>
                 ))}
                 <td className="table-cell text-center">
-                  <button className="text-[#4a3520] hover:text-red-500 text-xs" onClick={() =>
+                  <button className="text-[#3a5070] hover:text-red-500 text-xs" onClick={() =>
                     set('misticos.invocaciones', (mis.invocaciones || []).filter((_, idx) => idx !== i))
                   }>✕</button>
                 </td>

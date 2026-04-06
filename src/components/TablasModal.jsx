@@ -88,12 +88,12 @@ export default function TablasModal({ onClose }) {
         <table className="w-full text-xs border-collapse">
           <thead>
             <tr>{headers.map((h, i) => (
-              <th key={i} className="table-header text-left px-2 py-1 bg-[#1e180f] sticky top-0">{h}</th>
+              <th key={i} className="table-header text-left px-2 py-1 bg-[#162030] sticky top-0">{h}</th>
             ))}</tr>
           </thead>
           <tbody>
             {rows.map((row, i) => (
-              <tr key={i} className={i % 2 === 0 ? 'bg-[#1a1410]' : 'bg-[#1e180f]'}>
+              <tr key={i} className={i % 2 === 0 ? 'bg-[#1d2a3e]' : 'bg-[#162030]'}>
                 {row.map((cell, j) => (
                   <td key={j} className="table-cell px-2 py-0.5">{cell}</td>
                 ))}
@@ -113,10 +113,10 @@ export default function TablasModal({ onClose }) {
         return (
           <div className="flex gap-4">
             <div className="flex-1">
-              <div className="text-xs text-[#8a7560] mb-1">PV base por CON</div>
+              <div className="text-xs text-[#7fa8cc] mb-1">PV base por CON</div>
               {renderTable(['CON', 'PV base'], pvRows, 'pv_base_con')}
             </div>
-            <div className="text-xs text-[#4a3520] self-center px-2">
+            <div className="text-xs text-[#3a5070] self-center px-2">
               Nota DUDAS:<br/>¿misma tabla para Zeón<br/>(indexada por POD)?
             </div>
           </div>
@@ -130,14 +130,14 @@ export default function TablasModal({ onClose }) {
       case 'acciones':
         return (
           <>
-            <div className="text-xs text-[#8a7560] mb-1">Muestra el corte donde cambia el valor (DUDAS: verificar tabla 37 Excel)</div>
+            <div className="text-xs text-[#7fa8cc] mb-1">Muestra el corte donde cambia el valor (DUDAS: verificar tabla 37 Excel)</div>
             {renderTable(['DES+AGI (desde)', 'Acciones/turno'], accionesRows, 'acciones_turno')}
           </>
         )
       case 'categorias':
         return (
           <>
-            <div className="text-xs text-[#8a7560] mb-1">
+            <div className="text-xs text-[#7fa8cc] mb-1">
               20 categorías oficiales según Excel. Dropdown sincronizado con CATEGORIAS_DATA.
             </div>
             {renderTable(['Categoría', ...catKeys], catRows, 'categorias_data')}
@@ -153,17 +153,17 @@ export default function TablasModal({ onClose }) {
 
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/70">
-      <div className="bg-[#1a1410] border border-[#4a3520] rounded w-[90vw] max-w-5xl max-h-[90vh] flex flex-col">
+      <div className="bg-[#1d2a3e] border border-[#3a5070] rounded w-[90vw] max-w-5xl max-h-[90vh] flex flex-col">
         {/* Header */}
-        <div className="flex items-center justify-between px-4 py-2 border-b border-[#4a3520]">
-          <span className="text-[#c9a84c] font-bold">Tablas de Verificación</span>
-          <button className="text-[#8a7560] hover:text-[#c9a84c] text-lg" onClick={onClose}>✕</button>
+        <div className="flex items-center justify-between px-4 py-2 border-b border-[#3a5070]">
+          <span className="text-[#f5b832] font-bold">Tablas de Verificación</span>
+          <button className="text-[#7fa8cc] hover:text-[#f5b832] text-lg" onClick={onClose}>✕</button>
         </div>
         {/* Sub-nav */}
-        <div className="flex overflow-x-auto border-b border-[#2a1f10] bg-[#1e180f]">
+        <div className="flex overflow-x-auto border-b border-[#3a5070] bg-[#162030]">
           {SECCIONES.map(s => (
             <button key={s.id}
-              className={`px-3 py-1.5 text-xs whitespace-nowrap ${seccion === s.id ? 'text-[#c9a84c] border-b-2 border-[#c9a84c]' : 'text-[#8a7560] hover:text-[#c9a84c]'}`}
+              className={`px-3 py-1.5 text-xs whitespace-nowrap ${seccion === s.id ? 'text-[#f5b832] border-b-2 border-[#f5b832]' : 'text-[#7fa8cc] hover:text-[#f5b832]'}`}
               onClick={() => setSeccion(s.id)}>
               {s.label}
             </button>

@@ -31,8 +31,8 @@ export default function PinModal({ titulo, onConfirm, onCancel, error }) {
     <div className="fixed inset-0 bg-black/80 flex items-center justify-center z-50">
       <div className="panel p-6 w-80 flex flex-col items-center gap-4">
         <div className="text-4xl">🔒</div>
-        <h2 className="text-[#c9a84c] font-bold text-lg text-center">{titulo}</h2>
-        <p className="text-[#8a7560] text-sm text-center">Introduce el PIN de 4 dígitos</p>
+        <h2 className="text-[#f5b832] font-bold text-lg text-center">{titulo}</h2>
+        <p className="text-[#7fa8cc] text-sm text-center">Introduce el PIN de 4 dígitos</p>
 
         <div className="flex gap-3 mt-1">
           {pin.map((d, i) => (
@@ -45,7 +45,7 @@ export default function PinModal({ titulo, onConfirm, onCancel, error }) {
               value={d}
               onChange={e => handleChange(i, e.target.value)}
               onKeyDown={e => handleKeyDown(i, e)}
-              className="w-12 h-14 text-center text-2xl font-bold rounded border-2 border-[#4a3520] focus:border-[#c9a84c] bg-[#1a1410] text-[#e8d5b0]"
+              className="w-12 h-14 text-center text-2xl font-bold rounded border-2 border-[#3a5070] focus:border-[#f5b832] bg-[#1d2a3e] text-[#dce8f5]"
               style={{ border: '2px solid', borderColor: error ? '#8b1a1a' : undefined }}
             />
           ))}

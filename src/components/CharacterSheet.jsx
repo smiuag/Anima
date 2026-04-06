@@ -67,18 +67,18 @@ export default function CharacterSheet() {
   return (
     <div className="flex flex-col h-screen overflow-hidden">
       {/* Header */}
-      <div className="bg-[#1e180f] border-b border-[#4a3520] px-3 py-2 flex items-center gap-2 no-print">
+      <div className="bg-[#162030] border-b border-[#3a5070] px-3 py-2 flex items-center gap-2 no-print">
         <button className="btn-secondary shrink-0" onClick={backToPartida}>←</button>
         <div className="flex items-center gap-1.5 flex-1 min-w-0">
-          <span className="text-[#c9a84c] font-bold text-sm truncate">
+          <span className="text-[#f5b832] font-bold text-sm truncate">
             {char.nombre || 'Sin nombre'}
           </span>
-          {char.categoria && <span className="text-[#8a7560] text-xs hidden sm:inline">{char.categoria}</span>}
-          {char.nivel > 0  && <span className="text-[#8a7560] text-xs hidden sm:inline">Nv. {char.nivel}</span>}
-          {char.raza && char.raza !== 'Humano' && <span className="text-[#8a7560] text-xs hidden sm:inline">· {char.raza}</span>}
+          {char.categoria && <span className="text-[#7fa8cc] text-xs hidden sm:inline">{char.categoria}</span>}
+          {char.nivel > 0  && <span className="text-[#7fa8cc] text-xs hidden sm:inline">Nv. {char.nivel}</span>}
+          {char.raza && char.raza !== 'Humano' && <span className="text-[#7fa8cc] text-xs hidden sm:inline">· {char.raza}</span>}
         </div>
         {saveLabel && (
-          <span className={`text-xs shrink-0 hidden sm:inline ${saveStatus === 'saved' ? 'text-green-400' : saveStatus === 'error' ? 'text-red-400' : 'text-[#8a7560]'}`}>
+          <span className={`text-xs shrink-0 hidden sm:inline ${saveStatus === 'saved' ? 'text-green-400' : saveStatus === 'error' ? 'text-red-400' : 'text-[#7fa8cc]'}`}>
             {saveLabel}
           </span>
         )}
@@ -102,7 +102,7 @@ export default function CharacterSheet() {
       </div>
 
       {/* Tabs — scrollable on desktop, select on mobile */}
-      <div className="bg-[#1a1410] border-b border-[#4a3520] no-print">
+      <div className="bg-[#1d2a3e] border-b border-[#3a5070] no-print">
         {/* Desktop */}
         <div className="hidden sm:flex overflow-x-auto">
           {TABS.map(tab => (
@@ -116,7 +116,7 @@ export default function CharacterSheet() {
         {/* Mobile */}
         <div className="sm:hidden px-2 py-1">
           <select value={activeTab} onChange={e => setActiveTab(e.target.value)}
-            className="w-full bg-[#231d17] border border-[#4a3520] text-[#c9a84c] font-bold rounded px-2 py-1.5 text-sm">
+            className="w-full font-bold rounded px-2 py-1.5 text-sm">
             {TABS.map(tab => <option key={tab.id} value={tab.id}>{tab.label}</option>)}
           </select>
         </div>

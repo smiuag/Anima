@@ -69,14 +69,14 @@ export default function KiTab({ char }) {
         <div className="panel">
           <div className="panel-title">Puntos de Ki</div>
           {kiPoolTotal > 0 && (
-            <div className={`mx-2 mb-1 px-2 py-0.5 rounded text-xs flex gap-3 ${kiPoolLibre < 0 ? 'bg-red-900/40 text-red-400' : kiPoolLibre === 0 ? 'bg-green-900/30 text-green-400' : 'bg-[#2a1f10] text-[#8a7560]'}`}>
+            <div className={`mx-2 mb-1 px-2 py-0.5 rounded text-xs flex gap-3 ${kiPoolLibre < 0 ? 'bg-red-900/40 text-red-400' : kiPoolLibre === 0 ? 'bg-green-900/30 text-green-400' : 'bg-[#3a5070] text-[#7fa8cc]'}`}>
               <span>Pool Ki PDs: <b>{kiPoolTotal}</b></span>
               <span>Distribuido: <b>{totalKiPDs}</b></span>
               <span>Libre: <b className={kiPoolLibre < 0 ? 'text-red-400' : ''}>{kiPoolLibre}</b></span>
             </div>
           )}
           {acuPoolTotal > 0 && (
-            <div className={`mx-2 mb-1 px-2 py-0.5 rounded text-xs flex gap-3 ${acuPoolLibre < 0 ? 'bg-red-900/40 text-red-400' : acuPoolLibre === 0 ? 'bg-green-900/30 text-green-400' : 'bg-[#2a1f10] text-[#8a7560]'}`}>
+            <div className={`mx-2 mb-1 px-2 py-0.5 rounded text-xs flex gap-3 ${acuPoolLibre < 0 ? 'bg-red-900/40 text-red-400' : acuPoolLibre === 0 ? 'bg-green-900/30 text-green-400' : 'bg-[#3a5070] text-[#7fa8cc]'}`}>
               <span>Pool Acu PDs: <b>{acuPoolTotal}</b></span>
               <span>Distribuido: <b>{totalAcuPDs}</b></span>
               <span>Libre: <b className={acuPoolLibre < 0 ? 'text-red-400' : ''}>{acuPoolLibre}</b></span>
@@ -105,7 +105,7 @@ export default function KiTab({ char }) {
                 const acuTotal = acuBase + acuPds
                 return (
                   <tr key={s}>
-                    <td className="table-cell text-[#c9a84c] font-bold text-center">{s}</td>
+                    <td className="table-cell text-[#f5b832] font-bold text-center">{s}</td>
                     <td className="table-cell">
                       <span className="calc-input block text-center rounded">{kiBase}</span>
                     </td>
@@ -130,13 +130,13 @@ export default function KiTab({ char }) {
                   </tr>
                 )
               })}
-              <tr className="border-t border-[#4a3520]">
-                <td className="table-cell text-[#c9a84c] font-bold text-center text-xs">Total</td>
-                <td className="table-cell text-center text-[#8a7560]">{totalKiBase}</td>
-                <td className="table-cell text-center text-[#8a7560]">{totalKiPDs}</td>
-                <td className="table-cell text-center font-bold text-[#c9a84c]">{totalKi}</td>
-                <td className="table-cell text-center text-[#8a7560]">{stats.reduce((s2,s) => s2 + getAcuBase(s), 0)}</td>
-                <td className="table-cell text-center text-[#8a7560]">{totalAcuPDs}</td>
+              <tr className="border-t border-[#3a5070]">
+                <td className="table-cell text-[#f5b832] font-bold text-center text-xs">Total</td>
+                <td className="table-cell text-center text-[#7fa8cc]">{totalKiBase}</td>
+                <td className="table-cell text-center text-[#7fa8cc]">{totalKiPDs}</td>
+                <td className="table-cell text-center font-bold text-[#f5b832]">{totalKi}</td>
+                <td className="table-cell text-center text-[#7fa8cc]">{stats.reduce((s2,s) => s2 + getAcuBase(s), 0)}</td>
+                <td className="table-cell text-center text-[#7fa8cc]">{totalAcuPDs}</td>
                 <td></td>
               </tr>
             </tbody>
@@ -155,7 +155,7 @@ export default function KiTab({ char }) {
               <F label="Límites libres"><input type="number" value={ki.limites ?? 0} onChange={e => set('ki.limites', +e.target.value)} /></F>
             </div>
             {char.categoria && (
-              <div className="text-xs text-[#8a7560]">
+              <div className="text-xs text-[#7fa8cc]">
                 {catData.PlusCM || 0}×Nv{nivel}={((catData.PlusCM||0)*nivel)} + PDs:{pdsCmTotal} = {cmCalculado}
               </div>
             )}
@@ -210,7 +210,7 @@ export default function KiTab({ char }) {
                     }} />
                   </td>
                   <td className="table-cell text-center">
-                    <button className="text-[#4a3520] hover:text-red-500 text-xs" onClick={() =>
+                    <button className="text-[#3a5070] hover:text-red-500 text-xs" onClick={() =>
                       set('ki.pacteosSangre', (ki.pacteosSangre || []).filter((_, idx) => idx !== i))
                     }>✕</button>
                   </td>
@@ -256,7 +256,7 @@ export default function KiTab({ char }) {
                     }} />
                   </td>
                   <td className="table-cell text-center">
-                    <button className="text-[#4a3520] hover:text-red-500 text-xs" onClick={() => removeTecnica(i)}>✕</button>
+                    <button className="text-[#3a5070] hover:text-red-500 text-xs" onClick={() => removeTecnica(i)}>✕</button>
                   </td>
                 </tr>
               ))}

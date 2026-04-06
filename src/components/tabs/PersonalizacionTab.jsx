@@ -21,7 +21,7 @@ export default function PersonalizacionTab({ char }) {
       <CollapsiblePanel title="Elan y Personalización" defaultOpen={false}>
         <div className="p-2 flex flex-col gap-3">
           {(pers.elan || []).map((e, i) => (
-            <div key={i} className="flex gap-3 items-start border-b border-[#2a2018] pb-2">
+            <div key={i} className="flex gap-3 items-start border-b border-[#1e2d45] pb-2">
               <F label={`Elan ${i + 1}`} w="w-48">
                 <input value={e.nombre || ''} onChange={ev => {
                   const list = [...(pers.elan || [])]
@@ -125,8 +125,8 @@ export default function PersonalizacionTab({ char }) {
       {/* Patrones Mentales Personalizados */}
       <CollapsiblePanel title="Patrones Mentales Personalizados" defaultOpen={false}>
         {(pers.patronesMentalesPersonalizados || []).map((patron, i) => (
-          <div key={i} className="border-b border-[#2a2018] p-2">
-            <div className="text-[#c9a84c] text-xs font-bold mb-2">Patrón {i + 1}</div>
+          <div key={i} className="border-b border-[#1e2d45] p-2">
+            <div className="text-[#f5b832] text-xs font-bold mb-2">Patrón {i + 1}</div>
             <div className="flex gap-2 mb-2">
               <F label="Patrón Mental" w="flex-[2]">
                 <input value={patron.patron || ''} onChange={e => {

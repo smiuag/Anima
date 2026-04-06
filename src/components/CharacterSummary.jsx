@@ -6,13 +6,13 @@ import {
 } from '../data/tables'
 
 const Stat = ({ label, value, warn = false, dim = false }) => (
-  <div className={`flex flex-col items-center px-2 py-0.5 rounded ${dim ? 'opacity-40' : ''}`}>
-    <span className="text-[10px] text-[#4a3520] leading-none mb-0.5">{label}</span>
-    <span className={`text-xs font-bold leading-none ${warn ? 'text-red-400' : 'text-[#c9a84c]'}`}>{value}</span>
+  <div className={`flex flex-col items-center px-2 py-0.5 rounded ${dim ? 'opacity-35' : ''}`}>
+    <span className="text-[10px] text-[#5580a0] leading-none mb-0.5">{label}</span>
+    <span className={`text-xs font-bold leading-none ${warn ? 'text-red-400' : 'text-[#f5b832]'}`}>{value}</span>
   </div>
 )
 
-const Sep = () => <div className="w-px bg-[#2a1f10] self-stretch mx-0.5" />
+const Sep = () => <div className="w-px bg-[#3a5070] self-stretch mx-0.5" />
 
 export default function CharacterSummary({ char }) {
   const [open, setOpen] = useState(true)
@@ -89,19 +89,19 @@ export default function CharacterSummary({ char }) {
 
   if (!open) {
     return (
-      <div className="bg-[#1a1410] border-b border-[#2a1f10] px-3 py-0.5 flex items-center gap-2 no-print cursor-pointer" onClick={() => setOpen(true)}>
-        <span className="text-[#4a3520] text-xs">▶ Resumen</span>
-        <span className="text-[#c9a84c] text-xs font-bold">PV {pvCalc}</span>
-        <span className="text-[#8a7560] text-xs">Turno {turnoCalc}</span>
-        <span className="text-[#8a7560] text-xs">Atq {habAtq} / Esq {habEsq}</span>
+      <div className="bg-[#162030] border-b border-[#3a5070] px-3 py-0.5 flex items-center gap-2 no-print cursor-pointer" onClick={() => setOpen(true)}>
+        <span className="text-[#5580a0] text-xs">▶ Resumen</span>
+        <span className="text-[#f5b832] text-xs font-bold">PV {pvCalc}</span>
+        <span className="text-[#7fa8cc] text-xs">Turno {turnoCalc}</span>
+        <span className="text-[#7fa8cc] text-xs">Atq {habAtq} / Esq {habEsq}</span>
       </div>
     )
   }
 
   return (
-    <div className="bg-[#1a1410] border-b border-[#2a1f10] no-print">
+    <div className="bg-[#162030] border-b border-[#3a5070] no-print">
       <div className="flex items-center overflow-x-auto px-2 py-1 gap-0">
-        <button className="text-[#4a3520] hover:text-[#8a7560] text-xs mr-1 shrink-0" onClick={() => setOpen(false)} title="Colapsar resumen">▼</button>
+        <button className="text-[#5580a0] hover:text-[#7fa8cc] text-xs mr-1 shrink-0" onClick={() => setOpen(false)} title="Colapsar resumen">▼</button>
 
         <Stat label="PV" value={pvCalc} />
         <Stat label="Cansancio" value={conTotal} />

@@ -118,7 +118,7 @@ export default function PDsTab({ char }) {
   const maxMagia   = Math.round(pdsTotalesBase * limMagia)
   const maxPsi     = Math.round(pdsTotalesBase * limPsi)
 
-  const BarLimite = ({ label, gastado, maximo, color = '#c9a84c' }) => {
+  const BarLimite = ({ label, gastado, maximo, color = '#f5b832' }) => {
     if (!maximo) return null
     const pct = Math.min(100, Math.round((gastado / maximo) * 100))
     const over = gastado > maximo
@@ -126,9 +126,9 @@ export default function PDsTab({ char }) {
       <div className="flex flex-col gap-0.5">
         <div className="flex justify-between text-xs">
           <span className="field-label">{label}</span>
-          <span className={over ? 'text-red-400 font-bold' : 'text-[#8a7560]'}>{gastado} / {maximo} ({pct}%){over ? ' ⚠' : ''}</span>
+          <span className={over ? 'text-red-400 font-bold' : 'text-[#7fa8cc]'}>{gastado} / {maximo} ({pct}%){over ? ' ⚠' : ''}</span>
         </div>
-        <div className="h-1.5 bg-[#1a1410] rounded overflow-hidden">
+        <div className="h-1.5 bg-[#1d2a3e] rounded overflow-hidden">
           <div className="h-full rounded transition-all" style={{ width: `${pct}%`, backgroundColor: over ? '#ef4444' : color }} />
         </div>
       </div>
@@ -151,24 +151,24 @@ export default function PDsTab({ char }) {
             <div className={`calc-value text-center ${totalPDsGastados > totalPDsGanados ? 'text-red-400' : ''}`}>{totalPDsGastados}</div>
           </F>
           <F label="PDs Libres">
-            <div className={`calc-value text-center font-bold ${totalPDsGanados - totalPDsGastados < 0 ? 'text-red-400' : 'text-[#c9a84c]'}`}>{totalPDsGanados - totalPDsGastados}</div>
+            <div className={`calc-value text-center font-bold ${totalPDsGanados - totalPDsGastados < 0 ? 'text-red-400' : 'text-[#f5b832]'}`}>{totalPDsGanados - totalPDsGastados}</div>
           </F>
         </div>
         {char.categoria && pdsTotalesBase > 0 && (
           <div className="px-3 pb-3 flex flex-col gap-2">
-            <div className="text-xs text-[#8a7560] mb-1">Límites por área — {char.categoria}</div>
+            <div className="text-xs text-[#7fa8cc] mb-1">Límites por área — {char.categoria}</div>
             <BarLimite label="Combate + Ki" gastado={totalCombatePDs} maximo={maxCombate} />
             <BarLimite label="Místico"      gastado={totalMagiaPDs}   maximo={maxMagia}   color="#7a60c9" />
             <BarLimite label="Psíquico"     gastado={totalPsiPDs}     maximo={maxPsi}     color="#60a5c9" />
           </div>
         )}
-        <div className="px-3 pb-2 text-xs text-[#4a3520]">
-          Categoría: <span className="text-[#8a7560]">{char.categoria || '—'}</span>
+        <div className="px-3 pb-2 text-xs text-[#3a5070]">
+          Categoría: <span className="text-[#7fa8cc]">{char.categoria || '—'}</span>
           {!char.categoria && ' (selecciona categoría en tab General para ver límites)'}
         </div>
         <div className="p-2 flex flex-wrap gap-2">
           <div className="panel p-2 flex flex-col gap-1 w-64">
-            <div className="text-[#c9a84c] text-xs font-bold mb-1">Bonos de Novel</div>
+            <div className="text-[#f5b832] text-xs font-bold mb-1">Bonos de Novel</div>
             {Array.from({ length: 3 }, (_, i) => (
               <div key={i} className="flex gap-1">
                 <input placeholder={`Bono #${i + 1}`} value={pds.bonusNoveles?.[i] || ''} onChange={e => {
@@ -180,7 +180,7 @@ export default function PDsTab({ char }) {
             ))}
           </div>
           <div className="panel p-2 flex flex-col gap-1 w-64">
-            <div className="text-[#c9a84c] text-xs font-bold mb-1">Bonos Naturales</div>
+            <div className="text-[#f5b832] text-xs font-bold mb-1">Bonos Naturales</div>
             {Array.from({ length: 5 }, (_, i) => (
               <div key={i} className="flex gap-1">
                 <input placeholder={`Bono #${i + 1}`} value={pds.bonusNaturales?.[i] || ''} onChange={e => {
@@ -192,7 +192,7 @@ export default function PDsTab({ char }) {
             ))}
           </div>
           <div className="panel p-2 flex flex-col gap-1 w-64">
-            <div className="text-[#c9a84c] text-xs font-bold mb-1">Habilidades Naturales</div>
+            <div className="text-[#f5b832] text-xs font-bold mb-1">Habilidades Naturales</div>
             {Array.from({ length: 5 }, (_, i) => (
               <div key={i} className="flex gap-1">
                 <input placeholder={`Hab. #${i + 1}`} value={pds.habNaturales?.[i] || ''} onChange={e => {
@@ -209,12 +209,12 @@ export default function PDsTab({ char }) {
       {/* Selector de nivel */}
       <div className="panel">
         <div className="panel-title">Detalle por Nivel</div>
-        <div className="flex flex-wrap gap-1 p-2 border-b border-[#4a3520]">
+        <div className="flex flex-wrap gap-1 p-2 border-b border-[#3a5070]">
           {Array.from({ length: 20 }, (_, i) => i + 1).map(n => (
             <button key={n}
               className={`w-7 h-7 text-xs rounded border transition-colors ${activeNivel === n
-                ? 'bg-[#c9a84c] text-[#1a1410] border-[#c9a84c] font-bold'
-                : 'bg-[#1a1410] text-[#8a7560] border-[#4a3520] hover:border-[#c9a84c] hover:text-[#c9a84c]'
+                ? 'bg-[#f5b832] text-[#1d2a3e] border-[#f5b832] font-bold'
+                : 'bg-[#1d2a3e] text-[#7fa8cc] border-[#3a5070] hover:border-[#f5b832] hover:text-[#f5b832]'
               }`}
               onClick={() => setActiveNivel(n)}>
               {n}
@@ -242,7 +242,7 @@ export default function PDsTab({ char }) {
             <div className="panel">
               <div className="panel-title">Combate</div>
               <div className="p-1 flex flex-col gap-0.5">
-                <div className="flex text-[#4a3520] text-xs px-1">
+                <div className="flex text-[#3a5070] text-xs px-1">
                   <span className="flex-1">Habilidad</span><span className="w-8 text-center">×</span><span className="w-10 text-center">Pts</span><span className="w-10 text-center">PDs</span>
                 </div>
                 {SKILLS_COMBATE.map(s => {
@@ -251,10 +251,10 @@ export default function PDsTab({ char }) {
                   return (
                     <div key={s} className="flex items-center gap-1">
                       <span className="field-label flex-1 text-xs">{s}</span>
-                      <span className="w-8 text-center text-[#4a3520] text-xs">×{cost}</span>
+                      <span className="w-8 text-center text-[#3a5070] text-xs">×{cost}</span>
                       <input type="number" className="w-10 text-center text-xs" value={pts}
                         onChange={e => updNivelSkill('combate', s, e.target.value)} />
-                      <span className="w-10 text-center text-[#c9a84c] text-xs font-bold">{pts * cost}</span>
+                      <span className="w-10 text-center text-[#f5b832] text-xs font-bold">{pts * cost}</span>
                     </div>
                   )
                 })}
@@ -272,10 +272,10 @@ export default function PDsTab({ char }) {
                     return (
                       <div key={s} className="flex items-center gap-1">
                         <span className="field-label flex-1 text-xs">{s}</span>
-                        <span className="w-6 text-center text-[#4a3520] text-xs">×{cost}</span>
+                        <span className="w-6 text-center text-[#3a5070] text-xs">×{cost}</span>
                         <input type="number" className="w-10 text-center text-xs" value={pts}
                           onChange={e => updNivelSkill('ki', s, e.target.value)} />
-                        <span className="w-10 text-center text-[#c9a84c] text-xs font-bold">{pts * cost}</span>
+                        <span className="w-10 text-center text-[#f5b832] text-xs font-bold">{pts * cost}</span>
                       </div>
                     )
                   })}
@@ -290,10 +290,10 @@ export default function PDsTab({ char }) {
                     return (
                       <div key={s} className="flex items-center gap-1">
                         <span className="field-label flex-1 text-xs">{s}</span>
-                        <span className="w-6 text-center text-[#4a3520] text-xs">×{cost}</span>
+                        <span className="w-6 text-center text-[#3a5070] text-xs">×{cost}</span>
                         <input type="number" className="w-10 text-center text-xs" value={pts}
                           onChange={e => updNivelSkill('mistico', s, e.target.value)} />
-                        <span className="w-10 text-center text-[#c9a84c] text-xs font-bold">{pts * cost}</span>
+                        <span className="w-10 text-center text-[#f5b832] text-xs font-bold">{pts * cost}</span>
                       </div>
                     )
                   })}
@@ -308,15 +308,15 @@ export default function PDsTab({ char }) {
                     return (
                       <div key={s} className="flex items-center gap-1">
                         <span className="field-label flex-1 text-xs">{s}</span>
-                        <span className="w-6 text-center text-[#4a3520] text-xs">×{cost}</span>
+                        <span className="w-6 text-center text-[#3a5070] text-xs">×{cost}</span>
                         <input type="number" className="w-10 text-center text-xs" value={pts}
                           onChange={e => updNivelSkill('psiquico', s, e.target.value)} />
-                        <span className="w-10 text-center text-[#c9a84c] text-xs font-bold">{pts * cost}</span>
+                        <span className="w-10 text-center text-[#f5b832] text-xs font-bold">{pts * cost}</span>
                       </div>
                     )
                   })}
                 </div>
-                <div className="p-2 border-t border-[#4a3520]">
+                <div className="p-2 border-t border-[#3a5070]">
                   <div className="flex items-center gap-1">
                     <span className="field-label flex-1 text-xs">PDs en Caract.</span>
                     <input type="number" className="w-14 text-center"
@@ -343,10 +343,10 @@ export default function PDsTab({ char }) {
                   return (
                     <div key={s} className="flex items-center gap-1">
                       <span className="field-label flex-1 text-xs">{s}</span>
-                      <span className="w-6 text-center text-[#4a3520] text-xs">×{cost}</span>
+                      <span className="w-6 text-center text-[#3a5070] text-xs">×{cost}</span>
                       <input type="number" className="w-10 text-center text-xs" value={pts}
                         onChange={e => updNivelSec(s, e.target.value)} />
-                      <span className="w-10 text-center text-[#c9a84c] text-xs font-bold">{pts * cost}</span>
+                      <span className="w-10 text-center text-[#f5b832] text-xs font-bold">{pts * cost}</span>
                     </div>
                   )
                 })}
@@ -363,10 +363,10 @@ export default function PDsTab({ char }) {
                   return (
                     <div key={s} className="flex items-center gap-1">
                       <span className="field-label flex-1 text-xs">{s}</span>
-                      <span className="w-6 text-center text-[#4a3520] text-xs">×{cost}</span>
+                      <span className="w-6 text-center text-[#3a5070] text-xs">×{cost}</span>
                       <input type="number" className="w-10 text-center text-xs" value={pts}
                         onChange={e => updNivelSec(s, e.target.value)} />
-                      <span className="w-10 text-center text-[#c9a84c] text-xs font-bold">{pts * cost}</span>
+                      <span className="w-10 text-center text-[#f5b832] text-xs font-bold">{pts * cost}</span>
                     </div>
                   )
                 })}
@@ -433,7 +433,7 @@ export default function PDsTab({ char }) {
                       }} />
                     </td>
                     <td className="table-cell text-center">
-                      <button className="text-[#4a3520] hover:text-red-500 text-xs" onClick={() => {
+                      <button className="text-[#3a5070] hover:text-red-500 text-xs" onClick={() => {
                         const list = [...niveles]
                         const niv = { ...(list[activeNivel - 1] || {}) }
                         niv.ventajas = (niv.ventajas || []).filter((_, idx) => idx !== vi)

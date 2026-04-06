@@ -11,7 +11,7 @@ export default function CollapsiblePanel({ title, defaultOpen = true, actions, c
         <span>{title}</span>
         <div className="flex items-center gap-2">
           {actions && <span onClick={e => e.stopPropagation()}>{actions}</span>}
-          <span className="text-[#4a3520] text-xs">{open ? '▲' : '▼'}</span>
+          <span className="text-[#5580a0] text-xs">{open ? '▲' : '▼'}</span>
         </div>
       </div>
       {open && children}

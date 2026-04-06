@@ -2,147 +2,260 @@
 @tailwind components;
 @tailwind utilities;
 
-@layer base {
-  * { box-sizing: border-box; }
-  body {
-    background-color: #1a1410;
-    color: #e8d5b0;
-    font-family: 'Segoe UI', system-ui, sans-serif;
-    font-size: 14px;
-  }
-  input, select, textarea {
-    background: #2a2018 !important;
-    color: #e8d5b0 !important;
-    border: 1px solid #4a3520 !important;
-    border-radius: 3px;
-    padding: 4px 6px;
-    min-height: 28px;
-    outline: none;
-    width: 100%;
-    transition: border-color 0.1s;
-  }
-  input:focus, select:focus, textarea:focus {
-    border-color: #c9a84c !important;
-    box-shadow: 0 0 0 2px #c9a84c30;
-    background: #2e2418 !important;
-  }
-  input[type="number"] { text-align: center; }
-  input[type="checkbox"] { min-height: unset; width: auto; }
-  select option { background: #2a2018; }
+/* ─── Design tokens ─────────────────────────────────── */
+:root {
+  --bg-base:         #1d2a3e;
+  --bg-panel:        #263550;
+  --bg-header:       #162030;
+  --bg-input:        #1e2d45;
+  --border:          #3a5070;
+  --border-light:    #4d6888;
+  --text-primary:    #dce8f5;
+  --text-secondary:  #7fa8cc;
+  --text-muted:      #5580a0;
+  --text-calc:       #f5b832;
+  --accent:          #6a52e0;
+  --accent-hover:    #5a43cc;
+  --accent-light:    #a08af5;
 }
 
-@layer components {
-  .panel {
-    @apply bg-[#231d17] border border-[#4a3520] rounded;
-  }
-  .panel-title {
-    @apply text-[#c9a84c] font-bold text-xs uppercase tracking-wider px-2 py-1 bg-[#1e180f] border-b border-[#4a3520];
-  }
-  .field-label {
-    @apply text-[#8a7560] text-xs whitespace-nowrap;
-  }
-  .field-row {
-    @apply flex items-center gap-1 px-2 py-0.5;
-  }
-  .calc-value {
-    @apply bg-[#1a1410] text-[#c9a84c] font-bold text-right px-1 rounded border border-[#4a3520] min-w-[40px] text-center;
-  }
-  .tab-btn {
-    @apply px-3 py-1.5 text-xs font-medium border-b-2 transition-colors cursor-pointer;
-  }
-  .tab-btn-active {
-    @apply tab-btn text-[#c9a84c] border-[#c9a84c] bg-[#231d17];
-  }
-  .tab-btn-inactive {
-    @apply tab-btn text-[#8a7560] border-transparent hover:text-[#e8d5b0] hover:border-[#4a3520];
-  }
-  .btn {
-    @apply px-3 py-1 text-xs rounded border cursor-pointer font-medium transition-colors;
-  }
-  .btn-primary {
-    @apply btn bg-[#c9a84c] text-[#1a1410] border-[#c9a84c] hover:bg-[#e8c87a];
-  }
-  .btn-secondary {
-    @apply btn bg-[#231d17] text-[#e8d5b0] border-[#4a3520] hover:border-[#c9a84c] hover:text-[#c9a84c];
-  }
-  .btn-danger {
-    @apply btn bg-[#231d17] text-[#8b1a1a] border-[#8b1a1a] hover:bg-[#8b1a1a] hover:text-white;
-  }
-  .table-header {
-    @apply text-[#c9a84c] text-xs font-bold bg-[#1e180f] px-1 py-1 border-b border-[#4a3520];
-  }
-  .table-cell {
-    @apply px-1 py-0.5 border-b border-[#2a2018];
-  }
-  /* Compact table inputs — override min-height in dense tables */
-  .table-cell input, .table-cell select {
-    min-height: 24px;
-    padding: 2px 4px;
-  }
-  .add-row-btn {
-    @apply text-[#4a3520] hover:text-[#c9a84c] text-xs cursor-pointer px-2 py-0.5 transition-colors;
-  }
-  /* Calculated fields (read-only) */
-  .calc-input {
-    background: #1a1410 !important;
-    color: #c9a84c !important;
-    font-weight: bold;
-    text-align: center;
-    cursor: default;
-    border-color: #3a2e1a !important;
-  }
-  /* Editable fields that feed into calculations — subtle left accent */
-  input.editable-key {
-    border-left: 2px solid #5a4520 !important;
-  }
-  input.editable-key:focus {
-    border-left-color: #c9a84c !important;
-  }
-  /* Over-limit indicator */
-  .over-limit {
-    color: #ef4444 !important;
-    font-weight: bold;
-  }
+/* ─── Base ───────────────────────────────────────────── */
+body {
+  background: var(--bg-base);
+  color: var(--text-primary);
+  font-family: 'Inter', system-ui, sans-serif;
+  font-size: 14px;
 }
 
-/* Read-only / Modo lectura */
+/* ─── Panels ─────────────────────────────────────────── */
+.panel {
+  background: var(--bg-panel);
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  overflow: hidden;
+  margin-bottom: 0.5rem;
+}
+
+.panel-title {
+  background: var(--bg-header);
+  color: var(--text-calc);
+  font-size: 0.72rem;
+  font-weight: 700;
+  letter-spacing: 0.05em;
+  text-transform: uppercase;
+  padding: 0.35rem 0.75rem;
+  border-bottom: 1px solid var(--border);
+  user-select: none;
+}
+
+/* ─── Labels & calculated values ─────────────────────── */
+.field-label {
+  color: var(--text-secondary);
+  font-size: 0.68rem;
+  font-weight: 500;
+  letter-spacing: 0.02em;
+}
+
+.calc-value {
+  color: var(--text-calc);
+  font-weight: 700;
+  font-size: 0.875rem;
+}
+
+.calc-input {
+  border-color: var(--border-light) !important;
+  background: var(--bg-input) !important;
+  color: var(--text-calc) !important;
+  font-weight: 600;
+}
+
+/* ─── Tabs ───────────────────────────────────────────── */
+.tab-btn-active {
+  padding: 0.4rem 0.85rem;
+  font-size: 0.8rem;
+  font-weight: 700;
+  color: #fff;
+  background: var(--accent);
+  border-bottom: 2px solid var(--accent-light);
+  white-space: nowrap;
+  transition: background 0.15s;
+}
+
+.tab-btn-inactive {
+  padding: 0.4rem 0.85rem;
+  font-size: 0.8rem;
+  font-weight: 500;
+  color: var(--text-secondary);
+  background: transparent;
+  border-bottom: 2px solid transparent;
+  white-space: nowrap;
+  transition: background 0.15s, color 0.15s;
+}
+
+.tab-btn-inactive:hover {
+  color: var(--text-primary);
+  background: rgba(106, 82, 224, 0.15);
+}
+
+/* ─── Buttons ────────────────────────────────────────── */
+.btn-primary {
+  background: var(--accent);
+  color: #fff;
+  font-size: 0.75rem;
+  font-weight: 600;
+  padding: 0.3rem 0.65rem;
+  border-radius: 6px;
+  border: 1px solid var(--accent-hover);
+  transition: background 0.15s;
+}
+.btn-primary:hover { background: var(--accent-hover); }
+.btn-primary:disabled { opacity: 0.5; cursor: not-allowed; }
+
+.btn-secondary {
+  background: var(--bg-header);
+  color: var(--text-secondary);
+  font-size: 0.75rem;
+  font-weight: 500;
+  padding: 0.3rem 0.65rem;
+  border-radius: 6px;
+  border: 1px solid var(--border);
+  transition: color 0.15s, border-color 0.15s;
+}
+.btn-secondary:hover {
+  color: var(--text-primary);
+  border-color: var(--border-light);
+}
+
+.btn-danger {
+  background: transparent;
+  color: #f87171;
+  font-size: 0.75rem;
+  padding: 0.2rem 0.5rem;
+  border-radius: 4px;
+  border: 1px solid #7f1d1d;
+  transition: background 0.15s;
+}
+.btn-danger:hover { background: rgba(248, 113, 113, 0.1); }
+
+.add-row-btn {
+  color: var(--accent-light);
+  font-size: 0.7rem;
+  padding: 0.15rem 0.4rem;
+  border-radius: 4px;
+  border: 1px dashed var(--border);
+  background: transparent;
+  transition: border-color 0.15s, color 0.15s;
+}
+.add-row-btn:hover {
+  border-color: var(--accent-light);
+  background: rgba(160, 138, 245, 0.1);
+}
+
+/* ─── Tables ─────────────────────────────────────────── */
+.table-header {
+  background: var(--bg-header);
+  color: var(--text-muted);
+  font-size: 0.65rem;
+  font-weight: 700;
+  letter-spacing: 0.05em;
+  text-transform: uppercase;
+  padding: 0.28rem 0.5rem;
+  text-align: center;
+  border-bottom: 1px solid var(--border);
+}
+
+.table-cell {
+  padding: 0.2rem 0.35rem;
+  font-size: 0.8rem;
+  color: var(--text-primary);
+  border-bottom: 1px solid rgba(58, 80, 112, 0.4);
+}
+
+/* ─── Inputs ─────────────────────────────────────────── */
+input, textarea, select {
+  background: var(--bg-input);
+  color: var(--text-primary);
+  border: 1px solid var(--border);
+  border-radius: 4px;
+  padding: 0.18rem 0.4rem;
+  font-size: 0.8rem;
+  min-height: 26px;
+  width: 100%;               /* default: fill container */
+  transition: border-color 0.15s, box-shadow 0.15s;
+}
+
+input:focus, textarea:focus, select:focus {
+  outline: none;
+  border-color: var(--accent-light);
+  box-shadow: 0 0 0 2px rgba(160, 138, 245, 0.2);
+}
+
+/* Number inputs: narrow by default unless .w-full is applied */
+input[type=number]:not(.w-full) {
+  width: 4rem;
+  text-align: center;
+  padding: 0.18rem 0.2rem;
+}
+input[type=number] {
+  -moz-appearance: textfield;
+}
+input[type=number]::-webkit-inner-spin-button,
+input[type=number]::-webkit-outer-spin-button {
+  opacity: 0.35;
+}
+
+/* Explicit size classes for number inputs */
+input[type=number].w-input-sm  { width: 3rem  !important; }
+input[type=number].w-input-md  { width: 5.5rem !important; }
+input[type=number].w-input-lg  { width: 7rem  !important; }
+
+/* Checkboxes: reset to auto size */
+input[type=checkbox], input[type=radio] {
+  width: auto;
+  min-height: auto;
+}
+
+/* ─── Editable keys (skill name inputs in tables) ─────── */
+.editable-key {
+  background: transparent;
+  border: 1px solid transparent;
+  color: var(--text-secondary);
+  font-size: 0.75rem;
+}
+.editable-key:focus {
+  background: var(--bg-input);
+  border-color: var(--border);
+}
+
+/* ─── Limit indicator ────────────────────────────────── */
+.over-limit {
+  color: #f87171 !important;
+  font-weight: 700;
+}
+
+/* ─── Read-only mode ─────────────────────────────────── */
 .modo-lectura input,
-.modo-lectura select,
-.modo-lectura textarea {
-  pointer-events: none;
+.modo-lectura textarea,
+.modo-lectura select {
   background: transparent !important;
   border-color: transparent !important;
-  color: #e8d5b0 !important;
-  box-shadow: none !important;
+  pointer-events: none;
+  box-shadow: none;
 }
+.modo-lectura .btn-primary,
+.modo-lectura .btn-danger,
 .modo-lectura .add-row-btn,
-.modo-lectura button:not(.modo-lectura-toggle) { display: none !important; }
+.modo-lectura .modo-lectura-toggle { display: none; }
 
-/* Mobile */
-@media (max-width: 640px) {
-  input, select, textarea { min-height: 40px; font-size: 16px; /* prevent iOS zoom */ }
-  input[type="number"] { min-height: 40px; }
-  input[type="checkbox"] { min-height: unset; }
-  .table-cell input, .table-cell select { min-height: 36px; padding: 4px 6px; }
-  /* collapse multi-column grids to single column on mobile */
-  .grid.grid-cols-2, .grid.grid-cols-3 { grid-template-columns: 1fr !important; }
-  /* wider calc-value boxes */
-  .calc-value { min-width: 52px; }
-}
-
-/* Scrollbar */
-::-webkit-scrollbar { width: 6px; height: 6px; }
-::-webkit-scrollbar-track { background: #1a1410; }
-::-webkit-scrollbar-thumb { background: #4a3520; border-radius: 3px; }
-::-webkit-scrollbar-thumb:hover { background: #c9a84c; }
-
-/* Print */
+/* ─── Print ──────────────────────────────────────────── */
 @media print {
   .no-print { display: none !important; }
-  body { background: white; color: black; font-size: 10px; }
-  .panel { border-color: #ccc; background: white; page-break-inside: avoid; }
-  .panel-title { color: #333; background: #f5f5f5; }
-  input, select, textarea { background: transparent !important; color: black !important; border: 1px solid #ccc !important; }
-  .calc-value, .calc-input { color: #333 !important; background: #eee !important; }
-  .tab-content { display: block !important; }
+}
+
+/* ─── Mobile tweaks ──────────────────────────────────── */
+@media (max-width: 640px) {
+  body { font-size: 13px; }
+  input, textarea, select { min-height: 36px; font-size: 16px; }
+  input[type=number] { width: 4rem; font-size: 16px; }
+  .panel { border-radius: 4px; }
 }

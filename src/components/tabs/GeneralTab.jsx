@@ -40,7 +40,7 @@ export default function GeneralTab({ char }) {
               <F label="Nombre" w="flex-[2]"><input value={char.nombre || ''} onChange={e => set('nombre', e.target.value)} /></F>
               <F label="Categoría">
                 <select value={char.categoria || ''} onChange={e => set('categoria', e.target.value)}
-                  className="w-full bg-[#1a1410] border border-[#4a3520] text-[#e8d5b0] rounded px-2 py-1 text-sm">
+                  className="w-full bg-[#1d2a3e] border border-[#3a5070] text-[#dce8f5] rounded px-2 py-1 text-sm">
                   <option value="">— Sin categoría —</option>
                   {CATEGORIAS_LIST.map(c => <option key={c} value={c}>{c}</option>)}
                 </select>
@@ -50,7 +50,7 @@ export default function GeneralTab({ char }) {
             <Row>
               <F label="Raza">
                 <select value={char.raza || 'Humano'} onChange={e => set('raza', e.target.value)}
-                  className="w-full bg-[#1a1410] border border-[#4a3520] text-[#e8d5b0] rounded px-2 py-1 text-sm">
+                  className="w-full bg-[#1d2a3e] border border-[#3a5070] text-[#dce8f5] rounded px-2 py-1 text-sm">
                   {RAZAS.map(r => <option key={r} value={r}>{r}</option>)}
                 </select>
               </F>
@@ -70,26 +70,26 @@ export default function GeneralTab({ char }) {
 
         {/* Descripción Física */}
         <CollapsiblePanel title="Descripción Física" defaultOpen={false}>
-          <textarea className="w-full p-2 h-20 resize-none border-0 bg-[#231d17] text-[#e8d5b0]"
+          <textarea className="w-full p-2 h-20 resize-none border-0 bg-[#263550] text-[#dce8f5]"
             value={char.descripcionFisica || ''} onChange={e => set('descripcionFisica', e.target.value)} />
         </CollapsiblePanel>
 
         {/* Personalidad */}
         <CollapsiblePanel title="Personalidad" defaultOpen={false}>
-          <textarea className="w-full p-2 h-20 resize-none border-0 bg-[#231d17] text-[#e8d5b0]"
+          <textarea className="w-full p-2 h-20 resize-none border-0 bg-[#263550] text-[#dce8f5]"
             value={char.personalidad || ''} onChange={e => set('personalidad', e.target.value)} />
         </CollapsiblePanel>
 
         {/* Motivación */}
         <CollapsiblePanel title="Motivación y Objetivos" defaultOpen={false}>
-          <textarea className="w-full p-2 h-20 resize-none border-0 bg-[#231d17] text-[#e8d5b0]"
+          <textarea className="w-full p-2 h-20 resize-none border-0 bg-[#263550] text-[#dce8f5]"
             value={char.motivacion || ''} onChange={e => set('motivacion', e.target.value)} />
         </CollapsiblePanel>
 
         {/* Cita favorita */}
         <CollapsiblePanel title="Cita Favorita" defaultOpen={false}>
           <div className="p-2">
-            <textarea className="w-full h-12 resize-none border-0 bg-[#231d17] text-[#e8d5b0]"
+            <textarea className="w-full h-12 resize-none border-0 bg-[#263550] text-[#dce8f5]"
               value={char.citaFavorita || ''} onChange={e => set('citaFavorita', e.target.value)} />
           </div>
         </CollapsiblePanel>
@@ -141,7 +141,7 @@ export default function GeneralTab({ char }) {
                   <td className="table-cell"><input value={item.nombre} onChange={e => updateList('equipoCombate', i, 'nombre', e.target.value)} /></td>
                   <td className="table-cell"><input value={item.localizacion} onChange={e => updateList('equipoCombate', i, 'localizacion', e.target.value)} /></td>
                   <td className="table-cell"><input type="number" value={item.peso} onChange={e => updateList('equipoCombate', i, 'peso', e.target.value)} /></td>
-                  <td className="table-cell text-center"><button className="text-[#4a3520] hover:text-red-500 text-xs" onClick={() => removeRow('equipoCombate', i)}>✕</button></td>
+                  <td className="table-cell text-center"><button className="text-[#3a5070] hover:text-red-500 text-xs" onClick={() => removeRow('equipoCombate', i)}>✕</button></td>
                 </tr>
               ))}
             </tbody>
@@ -164,7 +164,7 @@ export default function GeneralTab({ char }) {
                 <tr key={i}>
                   <td className="table-cell"><input value={item.nombre} onChange={e => updateList('vestimenta', i, 'nombre', e.target.value)} /></td>
                   <td className="table-cell"><input type="number" value={item.peso} onChange={e => updateList('vestimenta', i, 'peso', e.target.value)} /></td>
-                  <td className="table-cell text-center"><button className="text-[#4a3520] hover:text-red-500 text-xs" onClick={() => removeRow('vestimenta', i)}>✕</button></td>
+                  <td className="table-cell text-center"><button className="text-[#3a5070] hover:text-red-500 text-xs" onClick={() => removeRow('vestimenta', i)}>✕</button></td>
                 </tr>
               ))}
             </tbody>
@@ -187,7 +187,7 @@ export default function GeneralTab({ char }) {
                 <tr key={i}>
                   <td className="table-cell"><input value={item.nombre} onChange={e => updateList('equipoVariado', i, 'nombre', e.target.value)} /></td>
                   <td className="table-cell"><input type="number" value={item.peso} onChange={e => updateList('equipoVariado', i, 'peso', e.target.value)} /></td>
-                  <td className="table-cell text-center"><button className="text-[#4a3520] hover:text-red-500 text-xs" onClick={() => removeRow('equipoVariado', i)}>✕</button></td>
+                  <td className="table-cell text-center"><button className="text-[#3a5070] hover:text-red-500 text-xs" onClick={() => removeRow('equipoVariado', i)}>✕</button></td>
                 </tr>
               ))}
             </tbody>
@@ -202,7 +202,7 @@ export default function GeneralTab({ char }) {
               <Row key={i}>
                 <F label="Nombre" w="w-32"><input value={item.nombre} onChange={e => updateList('artefactos', i, 'nombre', e.target.value)} /></F>
                 <F label="Descripción"><input value={item.descripcion} onChange={e => updateList('artefactos', i, 'descripcion', e.target.value)} /></F>
-                <button className="text-[#4a3520] hover:text-red-500 text-xs self-end mb-0.5" onClick={() => removeRow('artefactos', i)}>✕</button>
+                <button className="text-[#3a5070] hover:text-red-500 text-xs self-end mb-0.5" onClick={() => removeRow('artefactos', i)}>✕</button>
               </Row>
             ))}
           </div>
@@ -211,7 +211,7 @@ export default function GeneralTab({ char }) {
         {/* Títulos y Dinero */}
         <div className="grid grid-cols-2 gap-3">
           <CollapsiblePanel title="Títulos y Posesiones" defaultOpen={false}>
-            <textarea className="w-full p-2 h-20 resize-none border-0 bg-[#231d17] text-[#e8d5b0]"
+            <textarea className="w-full p-2 h-20 resize-none border-0 bg-[#263550] text-[#dce8f5]"
               value={char.titulosYPosesiones || ''} onChange={e => set('titulosYPosesiones', e.target.value)} />
           </CollapsiblePanel>
           <CollapsiblePanel title="Dinero">
@@ -228,7 +228,7 @@ export default function GeneralTab({ char }) {
               </F>
               <div className="flex justify-between text-xs mt-1">
                 <span className="field-label">Total</span>
-                <span className="text-[#c9a84c] font-bold">
+                <span className="text-[#f5b832] font-bold">
                   {((char.dinero?.oro || 0) + (char.dinero?.plata || 0) / 10 + (char.dinero?.cobre || 0) / 100 + (char.dinero?.joyas || 0)).toFixed(1)}
                 </span>
               </div>
@@ -238,13 +238,13 @@ export default function GeneralTab({ char }) {
 
         {/* Contactos */}
         <CollapsiblePanel title="Contactos" defaultOpen={false}>
-          <textarea className="w-full p-2 h-16 resize-none border-0 bg-[#231d17] text-[#e8d5b0]"
+          <textarea className="w-full p-2 h-16 resize-none border-0 bg-[#263550] text-[#dce8f5]"
             value={char.contactos || ''} onChange={e => set('contactos', e.target.value)} />
         </CollapsiblePanel>
 
         {/* Fama */}
         <CollapsiblePanel title="Fama y Reconocimiento" defaultOpen={false}>
-          <textarea className="w-full p-2 h-16 resize-none border-0 bg-[#231d17] text-[#e8d5b0]"
+          <textarea className="w-full p-2 h-16 resize-none border-0 bg-[#263550] text-[#dce8f5]"
             value={char.fama || ''} onChange={e => set('fama', e.target.value)} />
         </CollapsiblePanel>
       </div>

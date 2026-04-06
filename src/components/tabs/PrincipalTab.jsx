@@ -128,7 +128,7 @@ export default function PrincipalTab({ char }) {
                 const bono = getBonoCaracteristica(total)
                 return (
                   <tr key={s}>
-                    <td className="table-cell text-[#c9a84c] font-bold text-center">{s}</td>
+                    <td className="table-cell text-[#f5b832] font-bold text-center">{s}</td>
                     <td className="table-cell">
                       <input type="number" className="w-full text-center" value={c.base ?? 10}
                         onChange={e => handleCaractChange(s, 'base', e.target.value)} />
@@ -138,7 +138,7 @@ export default function PrincipalTab({ char }) {
                         onChange={e => handleCaractChange(s, 'temp', e.target.value)} />
                     </td>
                     <td className="table-cell text-center">
-                      <span className={razaBonus !== 0 ? (razaBonus > 0 ? 'text-green-400 font-bold text-xs' : 'text-red-400 font-bold text-xs') : 'text-[#4a3520] text-xs'}>
+                      <span className={razaBonus !== 0 ? (razaBonus > 0 ? 'text-green-400 font-bold text-xs' : 'text-red-400 font-bold text-xs') : 'text-[#3a5070] text-xs'}>
                         {razaBonus !== 0 ? (razaBonus > 0 ? '+' : '') + razaBonus : '—'}
                       </span>
                     </td>
@@ -163,7 +163,7 @@ export default function PrincipalTab({ char }) {
             </F>
             <div className="flex items-center justify-between">
               <span className="field-label">Movimiento (AGI {agiTotal})</span>
-              <span className="text-[#c9a84c] text-xs font-bold">{movTexto}</span>
+              <span className="text-[#f5b832] text-xs font-bold">{movTexto}</span>
             </div>
             <F label="Esp. Movimiento">
               <input value={char.movimiento?.esp || ''} onChange={e => set('movimiento.esp', e.target.value)} />
@@ -178,8 +178,8 @@ export default function PrincipalTab({ char }) {
             <div className="flex gap-2 text-xs">
               <div className="flex-1">
                 <div className="field-label">Calculado</div>
-                <div className="calc-input text-center rounded px-1 font-bold text-[#c9a84c]">{pvCalculado}</div>
-                <div className="text-[#4a3520] text-center mt-0.5">CON:{pvBase}×(1+{pvMultiplos}) +{catPlusPV}×Nv{nivel}</div>
+                <div className="calc-input text-center rounded px-1 font-bold text-[#f5b832]">{pvCalculado}</div>
+                <div className="text-[#3a5070] text-center mt-0.5">CON:{pvBase}×(1+{pvMultiplos}) +{catPlusPV}×Nv{nivel}</div>
               </div>
               <F label="Esp."><input type="number" value={char.puntosVida?.esp ?? 0} onChange={e => set('puntosVida.esp', +e.target.value)} /></F>
               <F label="Actual"><input type="number" value={char.puntosVida?.actual ?? pvCalculado} onChange={e => set('puntosVida.actual', +e.target.value)} /></F>
@@ -232,14 +232,14 @@ export default function PrincipalTab({ char }) {
                   : baseCalc + razaBonus + bono + esp
                 return (
                   <tr key={r}>
-                    <td className="table-cell text-[#c9a84c] font-bold text-center text-xs">
-                      {label}{statKey ? <span className="text-[#4a3520] font-normal text-xs"> ({statKey})</span> : ''}
+                    <td className="table-cell text-[#f5b832] font-bold text-center text-xs">
+                      {label}{statKey ? <span className="text-[#3a5070] font-normal text-xs"> ({statKey})</span> : ''}
                     </td>
                     <td className="table-cell">
                       <span className="calc-input block text-center px-1 rounded">{baseCalc}</span>
                     </td>
                     <td className="table-cell text-center">
-                      <span className={razaBonus !== 0 ? (razaBonus > 0 ? 'text-green-400 font-bold text-xs' : 'text-red-400 font-bold text-xs') : 'text-[#4a3520] text-xs'}>
+                      <span className={razaBonus !== 0 ? (razaBonus > 0 ? 'text-green-400 font-bold text-xs' : 'text-red-400 font-bold text-xs') : 'text-[#3a5070] text-xs'}>
                         {razaBonus !== 0 ? (razaBonus > 0 ? '+' : '') + razaBonus : '—'}
                       </span>
                     </td>
@@ -297,8 +297,8 @@ export default function PrincipalTab({ char }) {
               <tr><td className="table-cell field-label pl-2">Pen. Armadura (calc.)</td><td className="table-cell"><span className={`calc-input block text-center rounded ${penArmadFinal < 0 ? 'text-red-400' : ''}`}>{penArmadFinal}</span></td></tr>
               <tr><td className="table-cell field-label pl-2">Bono Arma</td><td className="table-cell"><input type="number" className="w-full text-center" value={turno.boniArma ?? 20} onChange={e => set('turno.boniArma', +e.target.value)} /></td></tr>
               <tr><td className="table-cell field-label pl-2">Esp.</td><td className="table-cell"><input type="number" className="w-full text-center" value={turno.esp ?? 0} onChange={e => set('turno.esp', +e.target.value)} /></td></tr>
-              <tr className="border-t border-[#c9a84c]">
-                <td className="table-cell text-[#c9a84c] font-bold pl-2">TOTAL</td>
+              <tr className="border-t border-[#f5b832]">
+                <td className="table-cell text-[#f5b832] font-bold pl-2">TOTAL</td>
                 <td className="table-cell"><span className="calc-input block text-center font-bold text-lg">{turnoTotal}</span></td>
               </tr>
             </tbody>
@@ -309,11 +309,11 @@ export default function PrincipalTab({ char }) {
         <div className="panel">
           <div className="panel-title">Habilidades de Combate</div>
           <div className="p-2 flex flex-col gap-2">
-            <div className="flex text-[#4a3520] text-xs px-0 mb-0.5">
+            <div className="flex text-[#3a5070] text-xs px-0 mb-0.5">
               <span className="w-24"></span>
               <span className="w-14 text-center">PDs×5</span>
               <span className="w-14 text-center">Esp.</span>
-              <span className="w-12 text-center font-bold text-[#8a7560]">Total</span>
+              <span className="w-12 text-center font-bold text-[#7fa8cc]">Total</span>
             </div>
             {['ataque', 'esquiva', 'parada', 'armadura'].map(h => {
               const hc = char.habilidadesCombate?.[h] || {}
@@ -327,7 +327,7 @@ export default function PrincipalTab({ char }) {
                   <span className="calc-input w-14 text-center rounded">{fromPDs}</span>
                   <input type="number" className="w-14 text-center" value={hc.esp ?? 0}
                     onChange={e => set(`habilidadesCombate.${h}.esp`, +e.target.value)} />
-                  <span className="calc-input w-12 text-center rounded font-bold text-[#c9a84c]">{total}</span>
+                  <span className="calc-input w-12 text-center rounded font-bold text-[#f5b832]">{total}</span>
                 </div>
               )
             })}
@@ -338,7 +338,7 @@ export default function PrincipalTab({ char }) {
               <div className="flex flex-col gap-0.5 w-20">
                 <span className="field-label">Acc/Turno</span>
                 <div className="calc-value text-center">{ACCIONES_TURNO(calcTotalConRaza('DES') + agiTotal)}</div>
-                <span className="text-[#4a3520] text-center" style={{fontSize:'9px'}}>DES+AGI={calcTotalConRaza('DES')+agiTotal}</span>
+                <span className="text-[#3a5070] text-center" style={{fontSize:'9px'}}>DES+AGI={calcTotalConRaza('DES')+agiTotal}</span>
               </div>
             </div>
           </div>
@@ -359,8 +359,8 @@ export default function PrincipalTab({ char }) {
                 ['+CV/nivel',      catData.PlusCV != null ? catData.PlusCV.toFixed(2).replace(/\.?0+$/, '') : '—'],
               ].map(([label, val]) => (
                 <div key={label} className="flex justify-between">
-                  <span className="text-[#8a7560]">{label}</span>
-                  <span className="text-[#c9a84c] font-bold">{val}</span>
+                  <span className="text-[#7fa8cc]">{label}</span>
+                  <span className="text-[#f5b832] font-bold">{val}</span>
                 </div>
               ))}
             </div>
@@ -380,7 +380,7 @@ export default function PrincipalTab({ char }) {
             <tbody>
               {(char.ajustesNivel || []).map((a, i) => (
                 <tr key={i}>
-                  <td className="table-cell text-[#8a7560] text-xs">{a.tipo}</td>
+                  <td className="table-cell text-[#7fa8cc] text-xs">{a.tipo}</td>
                   <td className="table-cell"><input value={a.notas} onChange={e => {
                     const list = [...(char.ajustesNivel || [])]
                     list[i] = { ...list[i], notas: e.target.value }
@@ -407,12 +407,12 @@ export default function PrincipalTab({ char }) {
             {/* Capacidades automáticas de la raza seleccionada */}
             {razaData.capacidades?.length > 0 && (
               <div>
-                <div className="text-[#8a7560] text-xs mb-1">
+                <div className="text-[#7fa8cc] text-xs mb-1">
                   Automáticas ({char.raza || 'sin raza'}):
                 </div>
                 <ul className="flex flex-col gap-0.5">
                   {razaData.capacidades.map((cap, i) => (
-                    <li key={i} className="text-xs text-[#c9a84c] pl-2 border-l-2 border-[#4a3520]">{cap}</li>
+                    <li key={i} className="text-xs text-[#f5b832] pl-2 border-l-2 border-[#3a5070]">{cap}</li>
                   ))}
                 </ul>
               </div>
@@ -420,7 +420,7 @@ export default function PrincipalTab({ char }) {
             {/* Capacidades adicionales (manuales) */}
             <div>
               {razaData.capacidades?.length > 0 && (
-                <div className="text-[#8a7560] text-xs mb-1">Adicionales / personalizadas:</div>
+                <div className="text-[#7fa8cc] text-xs mb-1">Adicionales / personalizadas:</div>
               )}
               <div className="flex flex-col gap-1">
                 {(char.capacidadesRaciales || []).map((cap, i) => (
@@ -430,7 +430,7 @@ export default function PrincipalTab({ char }) {
                       list[i] = e.target.value
                       set('capacidadesRaciales', list)
                     }} />
-                    <button className="text-[#4a3520] hover:text-red-500 text-xs px-1" onClick={() =>
+                    <button className="text-[#3a5070] hover:text-red-500 text-xs px-1" onClick={() =>
                       set('capacidadesRaciales', (char.capacidadesRaciales || []).filter((_, idx) => idx !== i))
                     }>✕</button>
                   </div>
@@ -456,7 +456,7 @@ export default function PrincipalTab({ char }) {
         </CollapsiblePanel>
 
         <CollapsiblePanel title="Notas Adicionales" defaultOpen={false}>
-          <textarea className="w-full p-2 h-24 resize-none border-0 bg-[#231d17] text-[#e8d5b0]"
+          <textarea className="w-full p-2 h-24 resize-none border-0 bg-[#263550] text-[#dce8f5]"
             value={char.notasAdicionales || ''} onChange={e => set('notasAdicionales', e.target.value)} />
         </CollapsiblePanel>
       </div>
@@ -480,7 +480,7 @@ export default function PrincipalTab({ char }) {
               {Object.entries(HABILIDADES_SECUNDARIAS).map(([cat, habs]) => (
                 <React.Fragment key={cat}>
                   <tr>
-                    <td colSpan={6} className="table-cell bg-[#1e180f] text-[#c9a84c] font-bold text-xs pl-2 py-1">{cat}</td>
+                    <td colSpan={6} className="table-cell bg-[#162030] text-[#f5b832] font-bold text-xs pl-2 py-1">{cat}</td>
                   </tr>
                   {Object.entries(habs).map(([hab, penBase]) => {
                     const h = habSec?.[cat]?.[hab] || {}
@@ -495,17 +495,17 @@ export default function PrincipalTab({ char }) {
                       <tr key={hab}>
                         <td className="table-cell pl-3">{hab}</td>
                         <td className="table-cell">
-                          <span className={`calc-input block text-center rounded ${fromPDs > 0 ? 'text-[#c9a84c]' : ''}`}>{fromPDs || '—'}</span>
+                          <span className={`calc-input block text-center rounded ${fromPDs > 0 ? 'text-[#f5b832]' : ''}`}>{fromPDs || '—'}</span>
                         </td>
                         <td className="table-cell">
                           <input type="number" className="w-full text-center" value={h.esp ?? 0}
                             onChange={e => set(`habilidadesSecundarias.${cat}.${hab}.esp`, +e.target.value)} />
                         </td>
                         <td className="table-cell">
-                          <span className={`block text-center ${bonoCat > 0 ? 'text-[#c9a84c] font-bold' : 'text-[#4a3520]'}`}>{bonoCat || '—'}</span>
+                          <span className={`block text-center ${bonoCat > 0 ? 'text-[#f5b832] font-bold' : 'text-[#3a5070]'}`}>{bonoCat || '—'}</span>
                         </td>
                         <td className="table-cell">
-                          <span className={`block text-center ${bonoRaza > 0 ? 'text-green-400 font-bold' : 'text-[#4a3520]'}`}>{bonoRaza || '—'}</span>
+                          <span className={`block text-center ${bonoRaza > 0 ? 'text-green-400 font-bold' : 'text-[#3a5070]'}`}>{bonoRaza || '—'}</span>
                         </td>
                         <td className="table-cell">
                           <span className={`calc-input block text-center rounded ${total === null ? 'opacity-40' : ''}`}>{total !== null ? total : '—'}</span>
@@ -517,7 +517,7 @@ export default function PrincipalTab({ char }) {
               ))}
               {/* Especiales */}
               <tr>
-                <td colSpan={6} className="table-cell bg-[#1e180f] text-[#c9a84c] font-bold text-xs pl-2 py-1">Especiales</td>
+                <td colSpan={6} className="table-cell bg-[#162030] text-[#f5b832] font-bold text-xs pl-2 py-1">Especiales</td>
               </tr>
               {(char.habSecEspeciales || []).map((h, i) => (
                 <tr key={`esp-${i}`}>
@@ -544,8 +544,8 @@ export default function PrincipalTab({ char }) {
                         set('habSecEspeciales', list)
                       }} />
                   </td>
-                  <td className="table-cell text-center text-[#4a3520]">—</td>
-                  <td className="table-cell text-center text-[#4a3520]">—</td>
+                  <td className="table-cell text-center text-[#3a5070]">—</td>
+                  <td className="table-cell text-center text-[#3a5070]">—</td>
                   <td className="table-cell">
                     <span className="calc-input block text-center rounded">{(h.penNatural || 0) + (h.bono || 0)}</span>
                   </td>

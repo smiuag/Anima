@@ -48,14 +48,14 @@ const WeaponBlock = ({ title, wKey, char, set, habCalc, totalMod }) => {
           <F label="Daño" w="w-14"><input type="number" value={w.dano ?? 0} onChange={e => upd('dano', +e.target.value)} /></F>
         </div>
         {/* Totales calculados */}
-        <div className="flex gap-1 border-t border-[#2a1f10] pt-1 mt-0.5">
+        <div className="flex gap-1 border-t border-[#3a5070] pt-1 mt-0.5">
           <div className="flex-1 flex items-center gap-1">
-            <span className="text-[#4a3520] text-xs">Total Atq:</span>
-            <span className="calc-value text-sm font-bold text-[#c9a84c] px-2">{totalAtq}</span>
+            <span className="text-[#3a5070] text-xs">Total Atq:</span>
+            <span className="calc-value text-sm font-bold text-[#f5b832] px-2">{totalAtq}</span>
           </div>
           <div className="flex-1 flex items-center gap-1">
-            <span className="text-[#4a3520] text-xs">Total {w.tipoDefensa || 'Par'}:</span>
-            <span className="calc-value text-sm font-bold text-[#c9a84c] px-2">{totalDef}</span>
+            <span className="text-[#3a5070] text-xs">Total {w.tipoDefensa || 'Par'}:</span>
+            <span className="calc-value text-sm font-bold text-[#f5b832] px-2">{totalDef}</span>
           </div>
         </div>
         <div className="flex gap-1">
@@ -65,7 +65,7 @@ const WeaponBlock = ({ title, wKey, char, set, habCalc, totalMod }) => {
           <F label="Rotura" w="w-12"><input type="number" value={w.rotura ?? 0} onChange={e => upd('rotura', +e.target.value)} /></F>
           <F label="Pres." w="w-12"><input type="number" value={w.pres ?? 0} onChange={e => upd('pres', +e.target.value)} /></F>
           <div className="flex items-end gap-1">
-            <label className="flex items-center gap-1 text-xs text-[#8a7560] cursor-pointer">
+            <label className="flex items-center gap-1 text-xs text-[#7fa8cc] cursor-pointer">
               <input type="checkbox" checked={!!w.tamExcesivo} onChange={e => upd('tamExcesivo', e.target.checked)} className="w-3 h-3" style={{width:'12px',height:'12px'}} />
               Tam.Exc
             </label>
@@ -114,7 +114,7 @@ const ListPanel = ({ title, listKey, char, set, fields, defaultOpen = true }) =>
                   </td>
                 ))}
                 <td className="table-cell text-center">
-                  <button className="text-[#4a3520] hover:text-red-500" onClick={() => removeRow(i)}>✕</button>
+                  <button className="text-[#3a5070] hover:text-red-500" onClick={() => removeRow(i)}>✕</button>
                 </td>
               </tr>
             ))}
@@ -189,7 +189,7 @@ export default function CombateTab({ char }) {
                     </td>
                   ))}
                   <td className="table-cell text-center">
-                    <button className="text-[#4a3520] hover:text-red-500" onClick={() => removeArmadura(i)}>✕</button>
+                    <button className="text-[#3a5070] hover:text-red-500" onClick={() => removeArmadura(i)}>✕</button>
                   </td>
                 </tr>
               ))}
@@ -224,8 +224,8 @@ export default function CombateTab({ char }) {
                 <input type="number" className="w-16 text-center" value={mod[k] ?? 0} onChange={e => set(`modificadoresCombate.${k}`, +e.target.value)} />
               </div>
             ))}
-            <div className="flex items-center justify-between mt-1 border-t border-[#4a3520] pt-1">
-              <span className="text-[#c9a84c] font-bold text-xs">Total</span>
+            <div className="flex items-center justify-between mt-1 border-t border-[#3a5070] pt-1">
+              <span className="text-[#f5b832] font-bold text-xs">Total</span>
               <span className={`font-bold text-sm ${totalMod >= 0 ? 'text-green-400' : 'text-red-400'}`}>{totalMod >= 0 ? '+' : ''}{totalMod}</span>
             </div>
           </div>
@@ -249,7 +249,7 @@ export default function CombateTab({ char }) {
                   const row = char.tablaDanos?.[pct] || { corte: 0, imp: 0, pen: 0, cal: 0 }
                   return (
                     <tr key={pct}>
-                      <td className="table-cell text-[#c9a84c] text-center font-bold">{pct}</td>
+                      <td className="table-cell text-[#f5b832] text-center font-bold">{pct}</td>
                       {['corte', 'imp', 'pen', 'cal'].map(t => (
                         <td key={t} className="table-cell">
                           <input type="number" className="w-full text-center" value={row[t] ?? 0}

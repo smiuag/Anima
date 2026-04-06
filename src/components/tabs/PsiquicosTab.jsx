@@ -64,74 +64,68 @@ export default function PsiquicosTab({ char }) {
   return (
     <div className="flex flex-col gap-3 p-3">
       {/* ── CVs y Potencial ── */}
-      <div className="grid grid-cols-3 gap-3">
+      <div className="grid grid-cols-2 gap-3">
+        {/* Columna izquierda: CVs + Potencial en un panel unificado */}
         <div className="panel">
           <div className="panel-title">Puntos de Concentración (CVs)</div>
-          <div className="p-2 flex flex-col gap-2">
+          <div className="p-2 flex flex-col gap-1.5">
             <div className="flex gap-2 items-end">
               <F label="Totales (calc.)">
-                <div className="calc-value">{cvsCalculados}</div>
+                <div className="calc-value text-lg">{cvsCalculados}</div>
               </F>
               <F label="Libres"><input type="number" value={psi.cvs?.libres ?? 0} onChange={e => set('psiquicos.cvs.libres', +e.target.value)} /></F>
               <F label="Usados"><input type="number" value={psi.cvs?.usados ?? 0} onChange={e => set('psiquicos.cvs.usados', +e.target.value)} /></F>
+              <F label="Por Turno"><input type="number" value={psi.cvs?.porTurno ?? 0} onChange={e => set('psiquicos.cvs.porTurno', +e.target.value)} /></F>
             </div>
             {char.categoria && (
-              <div className="text-xs text-[#8a7560]">
+              <div className="text-xs text-[#7fa8cc]">
                 Cat:{Math.floor(nivel * plusCV)} +PDs:{cvsPDs} = {cvsCalculados} CVs
               </div>
             )}
-            <F label="CVs por Turno">
-              <input type="number" value={psi.cvs?.porTurno ?? 0} onChange={e => set('psiquicos.cvs.porTurno', +e.target.value)} />
-            </F>
           </div>
         </div>
 
-        <div className="panel">
-          <div className="panel-title">Potencial y Proyección</div>
-          <div className="p-2 flex flex-col gap-2">
-            <F label="Potencial Psíquico">
-              <input type="number" value={psi.potencial ?? 0} onChange={e => set('psiquicos.potencial', +e.target.value)} />
-            </F>
-            <div className="flex gap-1 items-end">
-              <F label="Proyección Psíquica (calc.)">
-                <div className="calc-value text-center">{proyPsiCalcBase + (parseInt(psi.proyEsp) || 0)}</div>
+        {/* Columna derecha: Potencial + Proyección + tabla ref. compacta */}
+        <div className="flex flex-col gap-2">
+          <div className="panel mb-0">
+            <div className="panel-title">Potencial y Proyección</div>
+            <div className="p-2 flex gap-3 items-end flex-wrap">
+              <F label="Potencial Psíquico" w="w-28">
+                <input type="number" value={psi.potencial ?? 0} onChange={e => set('psiquicos.potencial', +e.target.value)} />
               </F>
-              <F label="Esp." w="w-16">
+              <F label="Proy. Psíquica (calc.)" w="flex-1">
+                <div className="calc-value">{proyPsiCalcBase + (parseInt(psi.proyEsp) || 0)}</div>
+              </F>
+              <F label="Esp." w="w-20">
                 <input type="number" value={psi.proyEsp ?? 0} onChange={e => set('psiquicos.proyEsp', +e.target.value)} />
               </F>
+              <F label="Nº Poderes Innatos" w="w-28">
+                <input type="number" value={psi.innatos ?? 0} onChange={e => set('psiquicos.innatos', +e.target.value)} />
+              </F>
+              <F label="Cristal Psi" w="flex-1">
+                <input value={psi.cristalPsi || ''} onChange={e => set('psiquicos.cristalPsi', e.target.value)} />
+              </F>
             </div>
-            {proyPsiPDsUnits > 0 && (
-              <div className="text-xs text-[#8a7560]">PDs:{proyPsiPDsUnits}×5={proyPsiCalcBase} +Esp:{parseInt(psi.proyEsp)||0}</div>
-            )}
-            <F label="Nº Poderes Innatos">
-              <input type="number" value={psi.innatos ?? 0} onChange={e => set('psiquicos.innatos', +e.target.value)} />
-            </F>
-            <F label="Cristal Psi">
-              <input value={psi.cristalPsi || ''} onChange={e => set('psiquicos.cristalPsi', e.target.value)} />
-            </F>
           </div>
-        </div>
-
-        <CollapsiblePanel title="Tabla General de CVs (ref.)" defaultOpen={false}>
-          <table className="w-full text-xs">
-            <thead>
-              <tr>
+          <CollapsiblePanel title="Tabla CVs (ref.)" defaultOpen={false} className="mb-0">
+            <table className="w-full text-xs">
+              <thead><tr>
                 <th className="table-header">Potencial</th>
                 <th className="table-header">1 CV</th>
                 <th className="table-header">Más CVs</th>
-              </tr>
-            </thead>
-            <tbody>
-              {CV_TABLA.map((row, i) => (
-                <tr key={i}>
-                  <td className="table-cell text-center text-[#c9a84c]">{row.pot}</td>
-                  <td className="table-cell text-center">{row.cv1}</td>
-                  <td className="table-cell text-center text-[#8a7560]">{row.cv2}</td>
-                </tr>
-              ))}
-            </tbody>
-          </table>
-        </CollapsiblePanel>
+              </tr></thead>
+              <tbody>
+                {CV_TABLA.map((row, i) => (
+                  <tr key={i}>
+                    <td className="table-cell text-center text-[#f5b832]">{row.pot}</td>
+                    <td className="table-cell text-center">{row.cv1}</td>
+                    <td className="table-cell text-center text-[#7fa8cc]">{row.cv2}</td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </CollapsiblePanel>
+        </div>
       </div>
 
       {/* ── Disciplinas ── */}
@@ -166,7 +160,7 @@ export default function PsiquicosTab({ char }) {
                   }} />
                 </td>
                 <td className="table-cell text-center">
-                  <button className="text-[#4a3520] hover:text-red-500 text-xs" onClick={() =>
+                  <button className="text-[#3a5070] hover:text-red-500 text-xs" onClick={() =>
                     set('psiquicos.disciplinas', (psi.disciplinas || []).filter((_, idx) => idx !== i))
                   }>✕</button>
                 </td>
@@ -205,7 +199,7 @@ export default function PsiquicosTab({ char }) {
                   }} />
                 </td>
                 <td className="table-cell text-center">
-                  <button className="text-[#4a3520] hover:text-red-500 text-xs" onClick={() =>
+                  <button className="text-[#3a5070] hover:text-red-500 text-xs" onClick={() =>
                     set('psiquicos.poderes', (psi.poderes || []).filter((_, idx) => idx !== i))
                   }>✕</button>
                 </td>
@@ -219,7 +213,7 @@ export default function PsiquicosTab({ char }) {
       <CollapsiblePanel title="Patrones Mentales"
         actions={<button className="add-row-btn" onClick={addPatron}>+ Añadir patrón</button>}>
         {(psi.patronesMentales || []).map((patron, i) => (
-          <div key={i} className="border-b border-[#2a2018] p-2">
+          <div key={i} className="border-b border-[#1e2d45] p-2">
             <div className="flex items-center justify-between mb-2">
               <div className="flex gap-2 flex-1">
                 <F label="Patrón Mental" w="flex-[2]">
@@ -244,7 +238,7 @@ export default function PsiquicosTab({ char }) {
                   }} />
                 </F>
               </div>
-              <button className="ml-2 text-[#4a3520] hover:text-red-500 text-xs" onClick={() =>
+              <button className="ml-2 text-[#3a5070] hover:text-red-500 text-xs" onClick={() =>
                 set('psiquicos.patronesMentales', (psi.patronesMentales || []).filter((_, idx) => idx !== i))
               }>✕</button>
             </div>
@@ -277,7 +271,7 @@ export default function PsiquicosTab({ char }) {
 
       {/* ── Notas ── */}
       <CollapsiblePanel title="Notas Adicionales" defaultOpen={false}>
-        <textarea className="w-full p-2 h-24 resize-none border-0 bg-[#231d17] text-[#e8d5b0]"
+        <textarea className="w-full p-2 h-24 resize-none border-0 bg-[#263550] text-[#dce8f5]"
           value={psi.notas || ''} onChange={e => set('psiquicos.notas', e.target.value)} />
       </CollapsiblePanel>
     </div>
