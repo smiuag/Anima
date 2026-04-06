@@ -1,5 +1,6 @@
 import React from 'react'
 import useCharacterStore from '../../store/useCharacterStore'
+import CollapsiblePanel from '../CollapsiblePanel'
 
 const F = ({ label, children, w = 'flex-1' }) => (
   <div className={`${w} flex flex-col gap-0.5`}>
@@ -17,8 +18,7 @@ export default function PersonalizacionTab({ char }) {
   return (
     <div className="flex flex-col gap-3 p-3">
       {/* Elan */}
-      <div className="panel">
-        <div className="panel-title">Elan y Personalización</div>
+      <CollapsiblePanel title="Elan y Personalización" defaultOpen={false}>
         <div className="p-2 flex flex-col gap-3">
           {(pers.elan || []).map((e, i) => (
             <div key={i} className="flex gap-3 items-start border-b border-[#2a2018] pb-2">
@@ -39,12 +39,11 @@ export default function PersonalizacionTab({ char }) {
             </div>
           ))}
         </div>
-      </div>
+      </CollapsiblePanel>
 
       {/* Invocaciones Personalizadas + Conjuro especializado */}
       <div className="grid grid-cols-2 gap-3">
-        <div className="panel">
-          <div className="panel-title">Invocaciones Personalizadas</div>
+        <CollapsiblePanel title="Invocaciones Personalizadas" defaultOpen={false}>
           <table className="w-full text-xs">
             <thead>
               <tr>
@@ -89,10 +88,9 @@ export default function PersonalizacionTab({ char }) {
               ))}
             </tbody>
           </table>
-        </div>
+        </CollapsiblePanel>
 
-        <div className="panel">
-          <div className="panel-title">Selección de Conjuros Especializados</div>
+        <CollapsiblePanel title="Conjuros Especializados" defaultOpen={false}>
           <table className="w-full text-xs">
             <thead>
               <tr>
@@ -121,12 +119,11 @@ export default function PersonalizacionTab({ char }) {
               ))}
             </tbody>
           </table>
-        </div>
+        </CollapsiblePanel>
       </div>
 
       {/* Patrones Mentales Personalizados */}
-      <div className="panel">
-        <div className="panel-title">Patrones Mentales Personalizados</div>
+      <CollapsiblePanel title="Patrones Mentales Personalizados" defaultOpen={false}>
         {(pers.patronesMentalesPersonalizados || []).map((patron, i) => (
           <div key={i} className="border-b border-[#2a2018] p-2">
             <div className="text-[#c9a84c] text-xs font-bold mb-2">Patrón {i + 1}</div>
@@ -178,7 +175,7 @@ export default function PersonalizacionTab({ char }) {
             </div>
           </div>
         ))}
-      </div>
+      </CollapsiblePanel>
     </div>
   )
 }

@@ -1,6 +1,7 @@
 import React from 'react'
 import useCharacterStore from '../../store/useCharacterStore'
 import { CATEGORIAS_DATA, RAZAS } from '../../data/tables'
+import CollapsiblePanel from '../CollapsiblePanel'
 
 const CATEGORIAS_LIST = Object.keys(CATEGORIAS_DATA)
 
@@ -68,38 +69,33 @@ export default function GeneralTab({ char }) {
         </div>
 
         {/* Descripción Física */}
-        <div className="panel">
-          <div className="panel-title">Descripción Física</div>
+        <CollapsiblePanel title="Descripción Física" defaultOpen={false}>
           <textarea className="w-full p-2 h-20 resize-none border-0 bg-[#231d17] text-[#e8d5b0]"
             value={char.descripcionFisica || ''} onChange={e => set('descripcionFisica', e.target.value)} />
-        </div>
+        </CollapsiblePanel>
 
         {/* Personalidad */}
-        <div className="panel">
-          <div className="panel-title">Personalidad</div>
+        <CollapsiblePanel title="Personalidad" defaultOpen={false}>
           <textarea className="w-full p-2 h-20 resize-none border-0 bg-[#231d17] text-[#e8d5b0]"
             value={char.personalidad || ''} onChange={e => set('personalidad', e.target.value)} />
-        </div>
+        </CollapsiblePanel>
 
         {/* Motivación */}
-        <div className="panel">
-          <div className="panel-title">Motivación y Objetivos</div>
+        <CollapsiblePanel title="Motivación y Objetivos" defaultOpen={false}>
           <textarea className="w-full p-2 h-20 resize-none border-0 bg-[#231d17] text-[#e8d5b0]"
             value={char.motivacion || ''} onChange={e => set('motivacion', e.target.value)} />
-        </div>
+        </CollapsiblePanel>
 
         {/* Cita favorita */}
-        <div className="panel">
-          <div className="panel-title">Cita Favorita</div>
+        <CollapsiblePanel title="Cita Favorita" defaultOpen={false}>
           <div className="p-2">
             <textarea className="w-full h-12 resize-none border-0 bg-[#231d17] text-[#e8d5b0]"
               value={char.citaFavorita || ''} onChange={e => set('citaFavorita', e.target.value)} />
           </div>
-        </div>
+        </CollapsiblePanel>
 
         {/* Valores morales */}
-        <div className="panel">
-          <div className="panel-title">Valores</div>
+        <CollapsiblePanel title="Valores" defaultOpen={false}>
           <div className="p-2 grid grid-cols-2 gap-2">
             {['audacia', 'cobardia', 'honorabilidad', 'infamia'].map(v => (
               <F key={v} label={v.charAt(0).toUpperCase() + v.slice(1)}>
@@ -108,11 +104,10 @@ export default function GeneralTab({ char }) {
               </F>
             ))}
           </div>
-        </div>
+        </CollapsiblePanel>
 
         {/* Salud Mental */}
-        <div className="panel">
-          <div className="panel-title">Salud Mental</div>
+        <CollapsiblePanel title="Salud Mental" defaultOpen={false}>
           <div className="p-2 flex flex-col gap-2">
             <F label="Umbral de locura">
               <input type="number" value={char.saludMental?.umbral || 0}
@@ -123,17 +118,14 @@ export default function GeneralTab({ char }) {
                 onChange={e => set('saludMental.notas', e.target.value)} />
             </F>
           </div>
-        </div>
+        </CollapsiblePanel>
       </div>
 
       {/* ── Columna derecha ── */}
       <div className="flex flex-col gap-3">
         {/* Equipo de Combate */}
-        <div className="panel">
-          <div className="panel-title flex items-center justify-between">
-            <span>Equipo de Combate</span>
-            <button className="add-row-btn" onClick={() => addRow('equipoCombate', { nombre: '', localizacion: '', peso: '' })}>+ Añadir</button>
-          </div>
+        <CollapsiblePanel title="Equipo de Combate"
+          actions={<button className="add-row-btn" onClick={() => addRow('equipoCombate', { nombre: '', localizacion: '', peso: '' })}>+ Añadir</button>}>
           <table className="w-full">
             <thead>
               <tr>
@@ -154,14 +146,11 @@ export default function GeneralTab({ char }) {
               ))}
             </tbody>
           </table>
-        </div>
+        </CollapsiblePanel>
 
         {/* Vestimenta */}
-        <div className="panel">
-          <div className="panel-title flex items-center justify-between">
-            <span>Vestimenta / Complementos</span>
-            <button className="add-row-btn" onClick={() => addRow('vestimenta', { nombre: '', peso: '' })}>+ Añadir</button>
-          </div>
+        <CollapsiblePanel title="Vestimenta / Complementos" defaultOpen={false}
+          actions={<button className="add-row-btn" onClick={() => addRow('vestimenta', { nombre: '', peso: '' })}>+ Añadir</button>}>
           <table className="w-full">
             <thead>
               <tr>
@@ -180,14 +169,11 @@ export default function GeneralTab({ char }) {
               ))}
             </tbody>
           </table>
-        </div>
+        </CollapsiblePanel>
 
         {/* Equipo variado */}
-        <div className="panel">
-          <div className="panel-title flex items-center justify-between">
-            <span>Equipo Variado</span>
-            <button className="add-row-btn" onClick={() => addRow('equipoVariado', { nombre: '', peso: '' })}>+ Añadir</button>
-          </div>
+        <CollapsiblePanel title="Equipo Variado" defaultOpen={false}
+          actions={<button className="add-row-btn" onClick={() => addRow('equipoVariado', { nombre: '', peso: '' })}>+ Añadir</button>}>
           <table className="w-full">
             <thead>
               <tr>
@@ -206,14 +192,11 @@ export default function GeneralTab({ char }) {
               ))}
             </tbody>
           </table>
-        </div>
+        </CollapsiblePanel>
 
         {/* Artefactos */}
-        <div className="panel">
-          <div className="panel-title flex items-center justify-between">
-            <span>Artefactos</span>
-            <button className="add-row-btn" onClick={() => addRow('artefactos', { nombre: '', descripcion: '' })}>+ Añadir</button>
-          </div>
+        <CollapsiblePanel title="Artefactos" defaultOpen={false}
+          actions={<button className="add-row-btn" onClick={() => addRow('artefactos', { nombre: '', descripcion: '' })}>+ Añadir</button>}>
           <div className="p-2 flex flex-col gap-1">
             {(char.artefactos || []).map((item, i) => (
               <Row key={i}>
@@ -223,17 +206,15 @@ export default function GeneralTab({ char }) {
               </Row>
             ))}
           </div>
-        </div>
+        </CollapsiblePanel>
 
         {/* Títulos y Dinero */}
         <div className="grid grid-cols-2 gap-3">
-          <div className="panel">
-            <div className="panel-title">Títulos y Posesiones</div>
+          <CollapsiblePanel title="Títulos y Posesiones" defaultOpen={false}>
             <textarea className="w-full p-2 h-20 resize-none border-0 bg-[#231d17] text-[#e8d5b0]"
               value={char.titulosYPosesiones || ''} onChange={e => set('titulosYPosesiones', e.target.value)} />
-          </div>
-          <div className="panel">
-            <div className="panel-title">Dinero</div>
+          </CollapsiblePanel>
+          <CollapsiblePanel title="Dinero">
             <div className="p-2 flex flex-col gap-1">
               {['oro', 'plata', 'cobre'].map(m => (
                 <F key={m} label={m.charAt(0).toUpperCase() + m.slice(1)}>
@@ -252,22 +233,20 @@ export default function GeneralTab({ char }) {
                 </span>
               </div>
             </div>
-          </div>
+          </CollapsiblePanel>
         </div>
 
         {/* Contactos */}
-        <div className="panel">
-          <div className="panel-title">Contactos</div>
+        <CollapsiblePanel title="Contactos" defaultOpen={false}>
           <textarea className="w-full p-2 h-16 resize-none border-0 bg-[#231d17] text-[#e8d5b0]"
             value={char.contactos || ''} onChange={e => set('contactos', e.target.value)} />
-        </div>
+        </CollapsiblePanel>
 
         {/* Fama */}
-        <div className="panel">
-          <div className="panel-title">Fama y Reconocimiento</div>
+        <CollapsiblePanel title="Fama y Reconocimiento" defaultOpen={false}>
           <textarea className="w-full p-2 h-16 resize-none border-0 bg-[#231d17] text-[#e8d5b0]"
             value={char.fama || ''} onChange={e => set('fama', e.target.value)} />
-        </div>
+        </CollapsiblePanel>
       </div>
     </div>
   )

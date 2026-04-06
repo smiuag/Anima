@@ -1,6 +1,7 @@
 import React from 'react'
 import useCharacterStore from '../../store/useCharacterStore'
-import { VIAS_MISTICAS } from '../../data/tables'
+import { VIAS_MISTICAS, PV_BASE_CON, ACT_BASE_POD, getCatData, getRazaData } from '../../data/tables'
+import CollapsiblePanel from '../CollapsiblePanel'
 
 const F = ({ label, children, w = 'flex-1' }) => (
   <div className={`${w} flex flex-col gap-0.5`}>
@@ -18,6 +19,44 @@ export default function MisticosTab({ char }) {
   const set = (path, val) => updateField(char.id, path, val)
 
   const mis = char.misticos || {}
+  const nivel = parseInt(char.nivel) || 0
+  const catData = getCatData(char.categoria)
+  const razaData = getRazaData(char.raza)
+  const getStatTotal = (s) => {
+    const c = char.caracteristicas?.[s] || {}
+    return (parseInt(c.base) || 0) + (parseInt(c.temp) || 0) + (razaData[s] || 0)
+  }
+  const podTotal = Math.max(1, Math.min(20, getStatTotal('POD')))
+
+  // Zeón auto-calculado: base POD + PlusZeon × nivel + esp
+  const zeonBase = PV_BASE_CON[podTotal] || 0
+  const plusZeon = catData.PlusZeon || 0
+  const zeonEsp = mis.zeon?.esp || 0
+  const zeonCalculado = zeonBase + plusZeon * nivel + zeonEsp
+
+  // ACT: base × (1 + múltiplos comprados). Cada múltiplo cuesta catData.ACT PDs.
+  const actBase = ACT_BASE_POD[podTotal] || 0
+  const actMultiplos = (char.pds?.niveles || []).reduce((sum, n) => sum + (parseInt(n?.mistico?.['ACT']) || 0), 0)
+  const actCalculado = actBase * (1 + actMultiplos)
+
+  // Zeón adicional desde PDs: cada "Pts" en PDsTab = 5 Zeón (factor ×5)
+  const zeonPDsUnits = (char.pds?.niveles || []).reduce((sum, n) => sum + (parseInt(n?.mistico?.['Zeón']) || 0), 0)
+  const zeonPDs = zeonPDsUnits * 5
+  const zeonCalculadoFinal = zeonBase + plusZeon * nivel + zeonEsp + zeonPDs
+
+  // Proyección Mágica auto-calc: Σ(pts_ProjMag en PDsTab) × 5 + esp
+  const proyPDsUnits = (char.pds?.niveles || []).reduce((sum, n) => sum + (parseInt(n?.mistico?.['Proyección Mágica']) || 0), 0)
+  const proyCalcBase = proyPDsUnits * 5
+
+  // Convocar / Dominar / Atar / Desconvocar: Σ(pts × 5) desde PDsTab
+  const pdsMistico = (skill) => (char.pds?.niveles || []).reduce((sum, n) => sum + (parseInt(n?.mistico?.[skill]) || 0), 0)
+  const convCalc   = pdsMistico('Convocar')    * 5
+  const domCalc    = pdsMistico('Dominar')     * 5
+  const atarCalc   = pdsMistico('Atar')        * 5
+  const desconvCalc = pdsMistico('Desconvocar') * 5
+
+  // Nivel de Magia desde PDsTab (factor pendiente de verificar — DUDAS.md)
+  const nivelMagiaPDs = pdsMistico('Nivel de Magia')
 
   const addConjuro = () => {
     const list = [...(mis.conjuros || [])]
@@ -45,13 +84,29 @@ export default function MisticosTab({ char }) {
         <div className="panel">
           <div className="panel-title">Zeón</div>
           <div className="p-2 flex flex-col gap-2">
-            <div className="flex gap-2">
-              <F label="Total"><input type="number" value={mis.zeon?.total ?? 0} onChange={e => set('misticos.zeon.total', +e.target.value)} /></F>
-              <F label="Usado"><input type="number" value={mis.zeon?.usado ?? 0} onChange={e => set('misticos.zeon.usado', +e.target.value)} /></F>
-              <F label="Diario"><input type="number" value={mis.zeon?.diario ?? 0} onChange={e => set('misticos.zeon.diario', +e.target.value)} /></F>
+            <div className="flex gap-2 items-end">
+              <F label="Total (calc.)">
+                <div className="calc-value">{zeonCalculadoFinal}</div>
+              </F>
+              <F label="Esp.">
+                <input type="number" value={mis.zeon?.esp ?? 0} onChange={e => set('misticos.zeon.esp', +e.target.value)} />
+              </F>
+              <F label="Usado">
+                <input type="number" value={mis.zeon?.usado ?? 0} onChange={e => set('misticos.zeon.usado', +e.target.value)} />
+              </F>
             </div>
-            <F label="Acumulación (por turno)">
-              <input type="number" value={mis.acumulacion ?? 0} onChange={e => set('misticos.acumulacion', +e.target.value)} />
+            {char.categoria && (
+              <div className="text-xs text-[#8a7560]">
+                POD:{zeonBase} +{plusZeon}×Nv{nivel} +PDs:{zeonPDsUnits}×5={zeonPDs} +Esp:{zeonEsp} = {zeonCalculadoFinal}
+              </div>
+            )}
+            <F label="Acumulación (calc.)">
+              <div className="flex items-center gap-2">
+                <div className="calc-value flex-1">{actCalculado}</div>
+                {char.categoria && (
+                  <span className="text-xs text-[#8a7560]">POD:{actBase}+Cat:{actCat}+PDs:{actPDs}</span>
+                )}
+              </div>
             </F>
             <F label="Coste Zeónico diario total">
               <input type="number" value={mis.costeDiario ?? 0} onChange={e => set('misticos.costeDiario', +e.target.value)} />
@@ -62,17 +117,60 @@ export default function MisticosTab({ char }) {
         <div className="panel">
           <div className="panel-title">Proyección y Nivel</div>
           <div className="p-2 flex flex-col gap-2">
-            <F label="Proyección Mágica">
-              <input type="number" value={mis.proyeccionMagica ?? 0} onChange={e => set('misticos.proyeccionMagica', +e.target.value)} />
-            </F>
+            <div className="flex gap-1 items-end">
+              <F label="Proyección Mágica (calc.)">
+                <div className="calc-value text-center">{proyCalcBase + (parseInt(mis.proyEsp) || 0)}</div>
+              </F>
+              <F label="Esp." w="w-16">
+                <input type="number" value={mis.proyEsp ?? 0} onChange={e => set('misticos.proyEsp', +e.target.value)} />
+              </F>
+            </div>
+            {char.categoria && proyPDsUnits > 0 && (
+              <div className="text-xs text-[#8a7560]">PDs:{proyPDsUnits}×5={proyCalcBase} +Esp:{parseInt(mis.proyEsp)||0}</div>
+            )}
             <div className="flex gap-2">
-              <F label="Nv. Magia"><input type="number" value={mis.nivelMagia ?? 0} onChange={e => set('misticos.nivelMagia', +e.target.value)} /></F>
-              <F label="Nv. Máx"><input type="number" value={mis.nivelMaximo ?? 0} onChange={e => set('misticos.nivelMaximo', +e.target.value)} /></F>
-              <F label="Nv. Usado"><input type="number" value={mis.nivelUsado ?? 0} onChange={e => set('misticos.nivelUsado', +e.target.value)} /></F>
+              <F label="Nv. Magia (PDs)">
+                <span className="calc-input block text-center">{nivelMagiaPDs}</span>
+              </F>
+              <F label="Nv. Máx.">
+                <input type="number" value={mis.nivelMaximo ?? 0} onChange={e => set('misticos.nivelMaximo', +e.target.value)} />
+              </F>
+              <F label="Nv. Usado">
+                <input type="number" value={mis.nivelUsado ?? 0} onChange={e => set('misticos.nivelUsado', +e.target.value)} />
+              </F>
             </div>
             <F label="Nombre Verdadero">
               <input value={mis.nombreVerdadero || ''} onChange={e => set('misticos.nombreVerdadero', e.target.value)} />
             </F>
+          </div>
+        </div>
+
+        <div className="panel">
+          <div className="panel-title">Habilidades de Invocación (calc.)</div>
+          <div className="p-2 flex flex-col gap-1 text-xs">
+            <div className="flex text-[#4a3520] text-xs px-0 mb-0.5">
+              <span className="w-24"></span><span className="w-12 text-center">PDs×5</span>
+              <span className="w-4 text-center"></span><span className="w-12 text-center">Esp.</span>
+              <span className="w-12 text-center font-bold text-[#8a7560]">Total</span>
+            </div>
+            {[
+              ['Convocar',    convCalc,    'convEsp'],
+              ['Dominar',     domCalc,     'domEsp'],
+              ['Atar',        atarCalc,    'atarEsp'],
+              ['Desconvocar', desconvCalc, 'desconvEsp'],
+            ].map(([label, base, espKey]) => {
+              const esp = parseInt(mis[espKey]) || 0
+              return (
+                <div key={label} className="flex items-center gap-1">
+                  <span className="field-label w-24">{label}</span>
+                  <span className="calc-input w-12 text-center rounded">{base || '—'}</span>
+                  <span className="text-[#4a3520] text-xs w-4 text-center">+</span>
+                  <input type="number" className="w-12 text-center" value={mis[espKey] ?? 0}
+                    onChange={e => set(`misticos.${espKey}`, +e.target.value)} />
+                  <span className="calc-input w-12 text-center rounded font-bold text-[#c9a84c]">{base + esp}</span>
+                </div>
+              )
+            })}
           </div>
         </div>
 
@@ -104,15 +202,7 @@ export default function MisticosTab({ char }) {
       </div>
 
       {/* ── Vías ── */}
-      <div className="panel">
-        <div className="panel-title flex items-center justify-between">
-          <span>Vías de Magia</span>
-          <button className="add-row-btn" onClick={() => {
-            const list = [...(mis.vias || [])]
-            list.push({ via: '', subVia: '', nivel: 0, nivelMax: 0, nivelUsado: 0 })
-            set('misticos.vias', list)
-          }}>+ Añadir vía</button>
-        </div>
+      <CollapsiblePanel title="Vías de Magia" actions={<button className="add-row-btn" onClick={() => { const list = [...(mis.vias||[])]; list.push({ via:'', subVia:'', nivel:0, nivelMax:0, nivelUsado:0 }); set('misticos.vias', list) }}>+ Añadir vía</button>}>
         <table className="w-full text-xs">
           <thead>
             <tr>
@@ -162,14 +252,10 @@ export default function MisticosTab({ char }) {
             ))}
           </tbody>
         </table>
-      </div>
+      </CollapsiblePanel>
 
       {/* ── Conjuros ── */}
-      <div className="panel">
-        <div className="panel-title flex items-center justify-between">
-          <span>Conjuros Seleccionados</span>
-          <button className="add-row-btn" onClick={addConjuro}>+ Añadir conjuro</button>
-        </div>
+      <CollapsiblePanel title="Conjuros Seleccionados" actions={<button className="add-row-btn" onClick={addConjuro}>+ Añadir conjuro</button>}>
         <table className="w-full text-xs">
           <thead>
             <tr>
@@ -221,15 +307,11 @@ export default function MisticosTab({ char }) {
             ))}
           </tbody>
         </table>
-      </div>
+      </CollapsiblePanel>
 
       {/* ── Metamagia + Poderes Místicos ── */}
       <div className="grid grid-cols-2 gap-3">
-        <div className="panel">
-          <div className="panel-title flex items-center justify-between">
-            <span>Metamagia</span>
-            <button className="add-row-btn" onClick={addMetamagia}>+ Añadir</button>
-          </div>
+        <CollapsiblePanel title="Metamagia" defaultOpen={false} actions={<button className="add-row-btn" onClick={addMetamagia}>+ Añadir</button>}>
           <table className="w-full text-xs">
             <thead>
               <tr>
@@ -264,17 +346,9 @@ export default function MisticosTab({ char }) {
               ))}
             </tbody>
           </table>
-        </div>
+        </CollapsiblePanel>
 
-        <div className="panel">
-          <div className="panel-title flex items-center justify-between">
-            <span>Poderes Místicos</span>
-            <button className="add-row-btn" onClick={() => {
-              const list = [...(mis.poderesMisticos || [])]
-              list.push({ nombre: '', descripcion: '' })
-              set('misticos.poderesMisticos', list)
-            }}>+ Añadir</button>
-          </div>
+        <CollapsiblePanel title="Poderes Místicos" defaultOpen={false} actions={<button className="add-row-btn" onClick={() => { const list=[...(mis.poderesMisticos||[])]; list.push({nombre:'',descripcion:''}); set('misticos.poderesMisticos',list) }}>+ Añadir</button>}>
           <table className="w-full text-xs">
             <thead>
               <tr>
@@ -309,15 +383,11 @@ export default function MisticosTab({ char }) {
               ))}
             </tbody>
           </table>
-        </div>
+        </CollapsiblePanel>
       </div>
 
       {/* ── Invocaciones ── */}
-      <div className="panel">
-        <div className="panel-title flex items-center justify-between">
-          <span>Invocaciones y Encarnaciones</span>
-          <button className="add-row-btn" onClick={addInvocacion}>+ Añadir</button>
-        </div>
+      <CollapsiblePanel title="Invocaciones y Encarnaciones" defaultOpen={false} actions={<button className="add-row-btn" onClick={addInvocacion}>+ Añadir</button>}>
         <table className="w-full text-xs">
           <thead>
             <tr>
@@ -358,11 +428,10 @@ export default function MisticosTab({ char }) {
             ))}
           </tbody>
         </table>
-      </div>
+      </CollapsiblePanel>
 
       {/* ── Ritual de Convocación ── */}
-      <div className="panel">
-        <div className="panel-title">Ritual de Convocación</div>
+      <CollapsiblePanel title="Ritual de Convocación" defaultOpen={false}>
         <div className="p-2 grid grid-cols-3 gap-2">
           <F label="Nombre Verdadero del objetivo">
             <input value={mis.ritualConvocacion?.nombreVerdadero || ''} onChange={e => set('misticos.ritualConvocacion.nombreVerdadero', e.target.value)} />
@@ -380,7 +449,7 @@ export default function MisticosTab({ char }) {
             <input value={mis.ritualConvocacion?.tenerParte || ''} onChange={e => set('misticos.ritualConvocacion.tenerParte', e.target.value)} />
           </F>
         </div>
-      </div>
+      </CollapsiblePanel>
     </div>
   )
 }

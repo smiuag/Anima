@@ -8,22 +8,26 @@
     background-color: #1a1410;
     color: #e8d5b0;
     font-family: 'Segoe UI', system-ui, sans-serif;
-    font-size: 13px;
+    font-size: 14px;
   }
   input, select, textarea {
     background: #2a2018 !important;
     color: #e8d5b0 !important;
     border: 1px solid #4a3520 !important;
     border-radius: 3px;
-    padding: 2px 5px;
+    padding: 4px 6px;
+    min-height: 28px;
     outline: none;
     width: 100%;
+    transition: border-color 0.1s;
   }
   input:focus, select:focus, textarea:focus {
     border-color: #c9a84c !important;
-    box-shadow: 0 0 0 1px #c9a84c40;
+    box-shadow: 0 0 0 2px #c9a84c30;
+    background: #2e2418 !important;
   }
-  input[type="number"] { text-align: right; }
+  input[type="number"] { text-align: center; }
+  input[type="checkbox"] { min-height: unset; width: auto; }
   select option { background: #2a2018; }
 }
 
@@ -65,10 +69,15 @@
     @apply btn bg-[#231d17] text-[#8b1a1a] border-[#8b1a1a] hover:bg-[#8b1a1a] hover:text-white;
   }
   .table-header {
-    @apply text-[#c9a84c] text-xs font-bold bg-[#1e180f] px-1 py-0.5 border-b border-[#4a3520];
+    @apply text-[#c9a84c] text-xs font-bold bg-[#1e180f] px-1 py-1 border-b border-[#4a3520];
   }
   .table-cell {
     @apply px-1 py-0.5 border-b border-[#2a2018];
+  }
+  /* Compact table inputs — override min-height in dense tables */
+  .table-cell input, .table-cell select {
+    min-height: 24px;
+    padding: 2px 4px;
   }
   .add-row-btn {
     @apply text-[#4a3520] hover:text-[#c9a84c] text-xs cursor-pointer px-2 py-0.5 transition-colors;
@@ -80,7 +89,45 @@
     font-weight: bold;
     text-align: center;
     cursor: default;
+    border-color: #3a2e1a !important;
   }
+  /* Editable fields that feed into calculations — subtle left accent */
+  input.editable-key {
+    border-left: 2px solid #5a4520 !important;
+  }
+  input.editable-key:focus {
+    border-left-color: #c9a84c !important;
+  }
+  /* Over-limit indicator */
+  .over-limit {
+    color: #ef4444 !important;
+    font-weight: bold;
+  }
+}
+
+/* Read-only / Modo lectura */
+.modo-lectura input,
+.modo-lectura select,
+.modo-lectura textarea {
+  pointer-events: none;
+  background: transparent !important;
+  border-color: transparent !important;
+  color: #e8d5b0 !important;
+  box-shadow: none !important;
+}
+.modo-lectura .add-row-btn,
+.modo-lectura button:not(.modo-lectura-toggle) { display: none !important; }
+
+/* Mobile */
+@media (max-width: 640px) {
+  input, select, textarea { min-height: 40px; font-size: 16px; /* prevent iOS zoom */ }
+  input[type="number"] { min-height: 40px; }
+  input[type="checkbox"] { min-height: unset; }
+  .table-cell input, .table-cell select { min-height: 36px; padding: 4px 6px; }
+  /* collapse multi-column grids to single column on mobile */
+  .grid.grid-cols-2, .grid.grid-cols-3 { grid-template-columns: 1fr !important; }
+  /* wider calc-value boxes */
+  .calc-value { min-width: 52px; }
 }
 
 /* Scrollbar */

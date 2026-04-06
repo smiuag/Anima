@@ -1,6 +1,8 @@
 import React, { useState } from 'react'
 import useAppStore from '../store/useAppStore'
 import { exportarFichaPDF } from '../services/pdfExport'
+import TablasModal from './TablasModal'
+import CharacterSummary from './CharacterSummary'
 import GeneralTab from './tabs/GeneralTab'
 import PrincipalTab from './tabs/PrincipalTab'
 import CombateTab from './tabs/CombateTab'
@@ -25,6 +27,8 @@ export default function CharacterSheet() {
   const { activePersonajeDatos, backToPartida, savePersonaje, saveStatus } = useAppStore()
   const [activeTab, setActiveTab] = useState('general')
   const [exporting, setExporting] = useState(false)
+  const [showTablas, setShowTablas] = useState(false)
+  const [modoLectura, setModoLectura] = useState(false)
 
   const handleExportPDF = async () => {
     setExporting(true)
@@ -63,43 +67,70 @@ export default function CharacterSheet() {
   return (
     <div className="flex flex-col h-screen overflow-hidden">
       {/* Header */}
-      <div className="bg-[#1e180f] border-b border-[#4a3520] px-3 py-2 flex items-center gap-3 no-print">
-        <button className="btn-secondary" onClick={backToPartida}>← Personajes</button>
-        <div className="flex items-center gap-2 flex-1">
-          <span className="text-[#c9a84c] font-bold text-sm">
+      <div className="bg-[#1e180f] border-b border-[#4a3520] px-3 py-2 flex items-center gap-2 no-print">
+        <button className="btn-secondary shrink-0" onClick={backToPartida}>←</button>
+        <div className="flex items-center gap-1.5 flex-1 min-w-0">
+          <span className="text-[#c9a84c] font-bold text-sm truncate">
             {char.nombre || 'Sin nombre'}
           </span>
-          {char.categoria && <span className="text-[#8a7560] text-xs">{char.categoria}</span>}
-          {char.nivel > 0  && <span className="text-[#8a7560] text-xs">Nv. {char.nivel}</span>}
-          {char.raza && char.raza !== 'Humano' && <span className="text-[#8a7560] text-xs">· {char.raza}</span>}
+          {char.categoria && <span className="text-[#8a7560] text-xs hidden sm:inline">{char.categoria}</span>}
+          {char.nivel > 0  && <span className="text-[#8a7560] text-xs hidden sm:inline">Nv. {char.nivel}</span>}
+          {char.raza && char.raza !== 'Humano' && <span className="text-[#8a7560] text-xs hidden sm:inline">· {char.raza}</span>}
         </div>
         {saveLabel && (
-          <span className={`text-xs ${saveStatus === 'saved' ? 'text-green-400' : saveStatus === 'error' ? 'text-red-400' : 'text-[#8a7560]'}`}>
+          <span className={`text-xs shrink-0 hidden sm:inline ${saveStatus === 'saved' ? 'text-green-400' : saveStatus === 'error' ? 'text-red-400' : 'text-[#8a7560]'}`}>
             {saveLabel}
           </span>
         )}
-        <button className="btn-primary" onClick={savePersonaje}>💾 Guardar</button>
-        <button className="btn-secondary" onClick={handleExportPDF} disabled={exporting}>
-          {exporting ? 'Generando...' : '📄 PDF oficial'}
+        <button className="btn-primary shrink-0" onClick={savePersonaje} title="Guardar">
+          <span className="hidden sm:inline">💾 Guardar</span>
+          <span className="sm:hidden">💾</span>
         </button>
-        <button className="btn-secondary" onClick={() => window.print()}>Imprimir</button>
+        <button className="btn-secondary shrink-0" onClick={() => setShowTablas(true)} title="Tablas">
+          <span className="hidden sm:inline">Tablas</span>
+          <span className="sm:hidden">☰</span>
+        </button>
+        <button className="btn-secondary shrink-0 modo-lectura-toggle" onClick={() => setModoLectura(m => !m)}
+          title={modoLectura ? 'Editar' : 'Solo lectura'}>
+          <span className="hidden sm:inline">{modoLectura ? '✏️ Editar' : '👁 Lectura'}</span>
+          <span className="sm:hidden">{modoLectura ? '✏️' : '👁'}</span>
+        </button>
+        <button className="btn-secondary shrink-0" onClick={handleExportPDF} disabled={exporting} title="PDF oficial">
+          <span className="hidden sm:inline">{exporting ? 'Generando...' : '📄 PDF oficial'}</span>
+          <span className="sm:hidden">📄</span>
+        </button>
       </div>
 
-      {/* Tabs */}
-      <div className="bg-[#1a1410] border-b border-[#4a3520] flex overflow-x-auto no-print">
-        {TABS.map(tab => (
-          <button key={tab.id}
-            className={activeTab === tab.id ? 'tab-btn-active' : 'tab-btn-inactive'}
-            onClick={() => setActiveTab(tab.id)}>
-            {tab.label}
-          </button>
-        ))}
+      {/* Tabs — scrollable on desktop, select on mobile */}
+      <div className="bg-[#1a1410] border-b border-[#4a3520] no-print">
+        {/* Desktop */}
+        <div className="hidden sm:flex overflow-x-auto">
+          {TABS.map(tab => (
+            <button key={tab.id}
+              className={activeTab === tab.id ? 'tab-btn-active' : 'tab-btn-inactive'}
+              onClick={() => setActiveTab(tab.id)}>
+              {tab.label}
+            </button>
+          ))}
+        </div>
+        {/* Mobile */}
+        <div className="sm:hidden px-2 py-1">
+          <select value={activeTab} onChange={e => setActiveTab(e.target.value)}
+            className="w-full bg-[#231d17] border border-[#4a3520] text-[#c9a84c] font-bold rounded px-2 py-1.5 text-sm">
+            {TABS.map(tab => <option key={tab.id} value={tab.id}>{tab.label}</option>)}
+          </select>
+        </div>
       </div>
+
+      {/* Summary bar */}
+      <CharacterSummary char={char} />
 
       {/* Content */}
-      <div className="flex-1 overflow-y-auto">
+      <div className={`flex-1 overflow-y-auto${modoLectura ? ' modo-lectura' : ''}`}>
         {renderTab()}
       </div>
+
+      {showTablas && <TablasModal onClose={() => setShowTablas(false)} />}
     </div>
   )
 }

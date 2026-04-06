@@ -1,6 +1,6 @@
 import React, { useState } from 'react'
 import useCharacterStore from '../../store/useCharacterStore'
-import { getCatData, HABILIDADES_SECUNDARIAS } from '../../data/tables'
+import { getCatData, HABILIDADES_SECUNDARIAS, getPdsPorNivel } from '../../data/tables'
 
 const F = ({ label, children, w = 'flex-1' }) => (
   <div className={`${w} flex flex-col gap-0.5`}>
@@ -9,9 +9,9 @@ const F = ({ label, children, w = 'flex-1' }) => (
   </div>
 )
 
-const SKILLS_COMBATE = ['H. Ataque', 'H. Esquiva', 'H. Parada', 'Llevar Armadura', 'Tablas de Armas', 'Tablas de Estilos', 'Artes Marciales']
+const SKILLS_COMBATE = ['H. Ataque', 'H. Esquiva', 'H. Parada', 'Llevar Armadura', 'Tablas de Armas', 'Tablas de Estilos', 'Artes Marciales', 'Múltiplos de PV']
 const SKILLS_KI = ['Puntos de KI', 'Acumulación de KI', 'CM']
-const SKILLS_MISTICO = ['Zeón', 'Nivel de Magia', 'Proyección Mágica', 'Convocar', 'Dominar', 'Atar', 'Desconvocar']
+const SKILLS_MISTICO = ['Zeón', 'ACT', 'Nivel de Magia', 'Proyección Mágica', 'Convocar', 'Dominar', 'Atar', 'Desconvocar']
 const SKILLS_PSIQUICO = ['CVs', 'Proyección Psíquica']
 const SKILLS_SEC = ['Acrobacias', 'Atletismo', 'Montar', 'Nadar', 'Trepar', 'Saltar',
   'Estilo', 'Intimidar', 'Liderazgo', 'Persuasión',
@@ -26,8 +26,9 @@ const SKILL_COST_KEY = {
   'H. Ataque': 'CosteHA', 'H. Esquiva': 'CosteHE', 'H. Parada': 'CosteHP',
   'Llevar Armadura': 'CosteLL_Armor', 'Tablas de Armas': 'CosteHA',
   'Tablas de Estilos': 'CosteHA', 'Artes Marciales': 'CosteHA',
+  'Múltiplos de PV': 'CosteMultiploPV',
   'CM': 'CosteKi',
-  'Zeón': 'CosteZeon', 'Nivel de Magia': 'CosteZeon',
+  'Zeón': 'CosteZeon', 'ACT': 'ACT', 'Nivel de Magia': 'CosteZeon',
   'Proyección Mágica': 'CosteProy_Mag',
   'Convocar': 'CosteConvocar', 'Dominar': 'CosteDominar',
   'Atar': 'CosteAtar', 'Desconvocar': 'CosteDesconv',
@@ -84,17 +85,54 @@ export default function PDsTab({ char }) {
     set('pds.niveles', list)
   }
 
-  // Total PDs gastados en nivel activo (puntos × coste por punto)
-  const calcTotalGastadoNivel = () => {
-    let total = 0
-    const n = nivel
-    SKILLS_COMBATE.forEach(s => { total += (parseInt(n.combate?.[s]) || 0) * getSkillCost(s) })
-    SKILLS_KI.forEach(s => { total += (parseInt(n.ki?.[s]) || 0) * getSkillCost(s) })
-    SKILLS_MISTICO.forEach(s => { total += (parseInt(n.mistico?.[s]) || 0) * getSkillCost(s) })
-    SKILLS_PSIQUICO.forEach(s => { total += (parseInt(n.psiquico?.[s]) || 0) * getSkillCost(s) })
-    SKILLS_SEC.forEach(s => { total += (parseInt(n.secundarias?.[s]) || 0) * getSecCost(s) })
-    total += parseInt(n.caracteristicas?.pdsGastados) || 0
-    return total
+  // Total PDs gastados en un nivel concreto
+  const calcGastadoNivelData = (n) => {
+    let combate = 0, magia = 0, psi = 0, otros = 0
+    SKILLS_COMBATE.forEach(s => { combate += (parseInt(n.combate?.[s]) || 0) * getSkillCost(s) })
+    SKILLS_KI.forEach(s => { combate += (parseInt(n.ki?.[s]) || 0) * getSkillCost(s) })
+    SKILLS_MISTICO.forEach(s => { magia += (parseInt(n.mistico?.[s]) || 0) * getSkillCost(s) })
+    SKILLS_PSIQUICO.forEach(s => { psi += (parseInt(n.psiquico?.[s]) || 0) * getSkillCost(s) })
+    SKILLS_SEC.forEach(s => { otros += (parseInt(n.secundarias?.[s]) || 0) * getSecCost(s) })
+    otros += parseInt(n.caracteristicas?.pdsGastados) || 0
+    return { combate, magia, psi, otros, total: combate + magia + psi + otros }
+  }
+  const calcTotalGastadoNivel = () => calcGastadoNivelData(nivel).total
+
+  // Totales acumulados a través de todos los niveles
+  const totalPDsGanados = niveles.reduce((sum, n) => sum + (parseInt(n?.pdsGanados) || 0), 0)
+  const totalPDsGastados = niveles.reduce((sum, n) => sum + calcGastadoNivelData(n || {}).total, 0)
+  const totalCombatePDs  = niveles.reduce((sum, n) => sum + calcGastadoNivelData(n || {}).combate, 0)
+  const totalMagiaPDs    = niveles.reduce((sum, n) => sum + calcGastadoNivelData(n || {}).magia, 0)
+  const totalPsiPDs      = niveles.reduce((sum, n) => sum + calcGastadoNivelData(n || {}).psi, 0)
+
+  const nivelPersonaje = parseInt(char.nivel) || 0
+  // Suma acumulada: nivel 0=400, nivel 1=600, nivel n≥2=600+(n-1)×100
+  const pdsTotalesBase = Array.from({ length: nivelPersonaje + 1 }, (_, i) => getPdsPorNivel(i))
+    .reduce((a, b) => a + b, 0)
+
+  // Límites por área
+  const limCombate = catData['Limite Combate'] || 0.5
+  const limMagia   = catData['Limite Magia']   || 0.5
+  const limPsi     = catData['Limite Psi']      || 0.5
+  const maxCombate = Math.round(pdsTotalesBase * limCombate)
+  const maxMagia   = Math.round(pdsTotalesBase * limMagia)
+  const maxPsi     = Math.round(pdsTotalesBase * limPsi)
+
+  const BarLimite = ({ label, gastado, maximo, color = '#c9a84c' }) => {
+    if (!maximo) return null
+    const pct = Math.min(100, Math.round((gastado / maximo) * 100))
+    const over = gastado > maximo
+    return (
+      <div className="flex flex-col gap-0.5">
+        <div className="flex justify-between text-xs">
+          <span className="field-label">{label}</span>
+          <span className={over ? 'text-red-400 font-bold' : 'text-[#8a7560]'}>{gastado} / {maximo} ({pct}%){over ? ' ⚠' : ''}</span>
+        </div>
+        <div className="h-1.5 bg-[#1a1410] rounded overflow-hidden">
+          <div className="h-full rounded transition-all" style={{ width: `${pct}%`, backgroundColor: over ? '#ef4444' : color }} />
+        </div>
+      </div>
+    )
   }
 
   return (
@@ -103,18 +141,30 @@ export default function PDsTab({ char }) {
       <div className="panel">
         <div className="panel-title">Resumen de Puntos de Desarrollo</div>
         <div className="p-2 grid grid-cols-4 gap-3">
-          <F label="PDs Totales Acumulados">
-            <input type="number" value={pds.pdsTotal ?? 0} onChange={e => set('pds.pdsTotal', +e.target.value)} />
+          <F label={`PDs Base (hasta Nv${nivelPersonaje})`}>
+            <div className="calc-value text-center">{pdsTotalesBase}</div>
           </F>
-          <F label="PDs Gastados">
-            <input type="number" value={pds.pdsGastados ?? 0} onChange={e => set('pds.pdsGastados', +e.target.value)} />
+          <F label="PDs Ganados (Σ niveles)">
+            <div className="calc-value text-center">{totalPDsGanados}</div>
+          </F>
+          <F label="PDs Gastados (Σ niveles)">
+            <div className={`calc-value text-center ${totalPDsGastados > totalPDsGanados ? 'text-red-400' : ''}`}>{totalPDsGastados}</div>
           </F>
           <F label="PDs Libres">
-            <input type="number" value={pds.pdsLibres ?? 0} onChange={e => set('pds.pdsLibres', +e.target.value)} />
+            <div className={`calc-value text-center font-bold ${totalPDsGanados - totalPDsGastados < 0 ? 'text-red-400' : 'text-[#c9a84c]'}`}>{totalPDsGanados - totalPDsGastados}</div>
           </F>
-          <F label="Categoría">
-            <input value={char.categoria || ''} readOnly className="calc-input" />
-          </F>
+        </div>
+        {char.categoria && pdsTotalesBase > 0 && (
+          <div className="px-3 pb-3 flex flex-col gap-2">
+            <div className="text-xs text-[#8a7560] mb-1">Límites por área — {char.categoria}</div>
+            <BarLimite label="Combate + Ki" gastado={totalCombatePDs} maximo={maxCombate} />
+            <BarLimite label="Místico"      gastado={totalMagiaPDs}   maximo={maxMagia}   color="#7a60c9" />
+            <BarLimite label="Psíquico"     gastado={totalPsiPDs}     maximo={maxPsi}     color="#60a5c9" />
+          </div>
+        )}
+        <div className="px-3 pb-2 text-xs text-[#4a3520]">
+          Categoría: <span className="text-[#8a7560]">{char.categoria || '—'}</span>
+          {!char.categoria && ' (selecciona categoría en tab General para ver límites)'}
         </div>
         <div className="p-2 flex flex-wrap gap-2">
           <div className="panel p-2 flex flex-col gap-1 w-64">

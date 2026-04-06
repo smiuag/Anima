@@ -1,5 +1,8 @@
 import { PDFDocument, rgb, StandardFonts } from 'pdf-lib'
-import { BONO_CARACTERISTICA, HABILIDADES_SECUNDARIAS } from '../data/tables'
+import {
+  BONO_CARACTERISTICA, HABILIDADES_SECUNDARIAS, getBonoCaracteristica,
+  getCatData, getRazaData, getTamano, TAMANOS, HAB_SEC_PLUS_KEYS
+} from '../data/tables'
 
 // ─── COORDINATE SYSTEM ───────────────────────────────────────────────────────
 // Source: measured from the official Anima character sheet PDF
@@ -143,6 +146,29 @@ export async function exportarFichaPDF(char) {
   const tb = (text, x, fy, sz = 7)         => txt(p1, fontB, text, x, fy, sz)
   const tr = (text, x, fy, w, sz = 7)      => txtR(p1, font,  text, x, fy, w, sz)
 
+  // ── DERIVED DATA ─────────────────────────────────────────────────────────
+  const catData  = getCatData(char.categoria)
+  const razaData = getRazaData(char.raza)
+  const nivel    = parseInt(char.nivel) || 0
+  const caract   = char.caracteristicas || {}
+  const pdNiveles = char.pds?.niveles || []
+
+  const getStatTotal = (s) => {
+    const c = caract[s] || {}
+    return (parseInt(c.base) || 0) + (parseInt(c.temp) || 0) + (razaData[s] || 0)
+  }
+
+  // Tamaño calculado
+  const fueTotal = getStatTotal('FUE')
+  const conTotal = getStatTotal('CON')
+  const tamanoBase = getTamano(fueTotal, conTotal)
+  const tamanoOffset = razaData.Tamano || 0
+  const tamano = tamanoOffset === 0 ? tamanoBase : (() => {
+    const idx = TAMANOS.indexOf(tamanoBase)
+    const newIdx = Math.min(Math.max(idx + tamanoOffset, 0), TAMANOS.length - 1)
+    return TAMANOS[newIdx]
+  })()
+
   // ── BASIC INFO ────────────────────────────────────────────────────────────
   tb(char.nombre    || '',   X_BASIC.nombre,    Y.nombre,    8)
   t(char.categoria  || '',   X_BASIC.categoria, Y.categoria)
@@ -154,35 +180,42 @@ export async function exportarFichaPDF(char) {
   t(char.altura     || '',   X_BASIC.altura,    Y.sexo)
   t(char.peso       || '',   X_BASIC.peso,      Y.sexo)
   t(char.raza !== 'Humano' ? char.raza || 'Humano' : 'Humano', X_BASIC.raza, Y.raza)
-  t(char.tamanoNombre || '',  X_BASIC.tamano,    Y.raza)
+  t(tamano.nombre || '', X_BASIC.tamano, Y.raza)
 
   // ── CARACTERÍSTICAS ───────────────────────────────────────────────────────
-  const caract = char.caracteristicas || {}
   for (let i = 0; i < CARACT_KEYS.length; i++) {
-    const key  = CARACT_KEYS[i]
-    const stat = caract[key] || {}
-    const base   = stat.base   !== undefined ? String(stat.base)  : ''
-    const actual = stat.total  !== undefined ? String(stat.total) : base
-    const bono   = base !== '' ? String(BONO_CARACTERISTICA[Number(base)] ?? '') : ''
+    const key   = CARACT_KEYS[i]
+    const stat  = caract[key] || {}
+    const base  = parseInt(stat.base) || 0
+    const total = getStatTotal(key)
+    const bono  = getBonoCaracteristica(total)
 
-    tr(base,   CARACT_X.base.x,   CARACT_Y[i], CARACT_X.base.w)
-    tr(actual, CARACT_X.actual.x, CARACT_Y[i], CARACT_X.actual.w)
-    tr(bono,   CARACT_X.bono.x,   CARACT_Y[i], CARACT_X.bono.w)
+    tr(base  !== 0 ? String(base)  : '', CARACT_X.base.x,   CARACT_Y[i], CARACT_X.base.w)
+    tr(total !== 0 ? String(total) : '', CARACT_X.actual.x, CARACT_Y[i], CARACT_X.actual.w)
+    tr(bono  !== 0 ? String(bono)  : '', CARACT_X.bono.x,   CARACT_Y[i], CARACT_X.bono.w)
   }
 
   // ── SECONDARY SKILLS ──────────────────────────────────────────────────────
   const habSec = char.habilidadesSecundarias || {}
+  const sumSecPDs = (skill) =>
+    pdNiveles.reduce((sum, n) => sum + (parseInt(n?.secundarias?.[skill]) || 0), 0) * 5
+
   for (const [rowY, cat, skill] of SKILL_ROWS) {
     if (!cat || !skill) continue
-    const h = habSec?.[cat]?.[skill] || {}
-    const penBase = HABILIDADES_SECUNDARIAS[cat]?.[skill] ?? 0
-    const penNat = Number(h.penNatural) || 0
-    const bono   = Number(h.bono)       || 0
-    const total  = (penBase ?? 0) + penNat + bono
+    const h       = habSec?.[cat]?.[skill] || {}
+    const penBase = HABILIDADES_SECUNDARIAS[cat]?.[skill]  // null for free skills
+    const fromPDs = sumSecPDs(skill)
+    const esp     = parseInt(h.esp) || 0
+    const plusKey = HAB_SEC_PLUS_KEYS[skill]
+    const bonoCat  = plusKey ? (catData[plusKey] || 0) * nivel : 0
+    const bonoRaza = razaData.habSec?.[skill] || 0
+    const base    = penBase !== null && penBase !== undefined ? penBase : (fromPDs || esp || bonoCat || bonoRaza ? 0 : null)
+    const total   = base !== null ? base + fromPDs + esp + bonoCat + bonoRaza : null
 
-    tr(penNat !== 0 ? String(penNat) : '', SK.base.x,  rowY, SK.base.w,  6.5)
-    tr(bono   !== 0 ? String(bono)   : '', SK.bono.x,  rowY, SK.bono.w,  6.5)
-    tr(total  !== 0 ? String(total)  : '', SK.final.x, rowY, SK.final.w, 6.5)
+    tr(fromPDs  ? String(fromPDs)  : '', SK.bono.x,  rowY, SK.bono.w,  6.5)
+    tr(esp      ? String(esp)      : '', SK.esp.x,   rowY, SK.esp.w,   6.5)
+    tr(bonoCat  ? String(bonoCat)  : '', SK.cat.x,   rowY, SK.cat.w,   6.5)
+    tr(total !== null && total !== 0 ? String(total) : '', SK.final.x, rowY, SK.final.w, 6.5)
   }
 
   // ── SAVE & DOWNLOAD ───────────────────────────────────────────────────────

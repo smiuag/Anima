@@ -33,13 +33,13 @@ export const REGENERACION_CON = {
 
 // Tabla 80: Tamaño por FUE+CON
 export const TAMANOS = [
-  { min: -99, max: 3, nombre: 'Minúsculo', turnoBase: 40 },
-  { min: 4, max: 8, nombre: 'Pequeño', turnoBase: 30 },
-  { min: 9, max: 22, nombre: 'Medio', turnoBase: 20 },
-  { min: 23, max: 24, nombre: 'Grande', turnoBase: 10 },
-  { min: 25, max: 28, nombre: 'Enorme', turnoBase: 0 },
-  { min: 29, max: 33, nombre: 'Gigantesco', turnoBase: -10 },
-  { min: 34, max: 999, nombre: 'Colosal', turnoBase: -20 },
+  { min: -99, max: 3,   nombre: 'Minúsculo',  turnoBase: 40,  multAcum: 1,  armadura: 1,  atFisico: 5,  armaNatural: 20,  rotura: -4, entereza: 4  },
+  { min: 4,   max: 8,   nombre: 'Pequeño',    turnoBase: 30,  multAcum: 2,  armadura: 2,  atFisico: 10, armaNatural: 30,  rotura: -2, entereza: 8  },
+  { min: 9,   max: 22,  nombre: 'Medio',      turnoBase: 20,  multAcum: 5,  armadura: 3,  atFisico: 15, armaNatural: 40,  rotura: 0,  entereza: 12 },
+  { min: 23,  max: 24,  nombre: 'Grande',     turnoBase: 10,  multAcum: 5,  armadura: 4,  atFisico: 20, armaNatural: 60,  rotura: 4,  entereza: 16 },
+  { min: 25,  max: 28,  nombre: 'Enorme',     turnoBase: 0,   multAcum: 10, armadura: 6,  atFisico: 30, armaNatural: 100, rotura: 8,  entereza: 20 },
+  { min: 29,  max: 33,  nombre: 'Gigantesco', turnoBase: -10, multAcum: 15, armadura: 8,  atFisico: 40, armaNatural: 120, rotura: 12, entereza: 28 },
+  { min: 34,  max: 999, nombre: 'Colosal',    turnoBase: -20, multAcum: 20, armadura: 10, atFisico: 60, armaNatural: 140, rotura: 16, entereza: 34 },
 ]
 
 export const getTamano = (fue, con) => {
@@ -56,39 +56,14 @@ export const RAZAS = [
   "Duk'zarist", 'Devah', 'Vetala', 'Tuan Dalyr', 'Turak', 'Criatura'
 ]
 
-// Bonos raciales a resistencias
-export const BONOS_RAZA_RESIST = {
-  'Humano': { RF: 0, RE: 0, RV: 0, RM: 0, RP: 0 },
-  'Nephilim Sylvain': { RF: 5, RE: 20, RV: 5, RM: 10, RP: 10 },
-  'Nephilim Jayán': { RF: 15, RE: 0, RV: 0, RM: -10, RP: 0 },
-  "Nephilim D'Anjayni": { RF: 0, RE: 0, RV: 0, RM: 0, RP: 0 },
-  'Nephilim Ebudan': { RF: 0, RE: 0, RV: 0, RM: 0, RP: 0 },
-  'Nephilim Daimah': { RF: 0, RE: 0, RV: 0, RM: 0, RP: 0 },
-  "Nephilim Duk'zarist": { RF: 20, RE: 15, RV: 15, RM: 15, RP: 15 },
-  'Nephilim Devah': { RF: -10, RE: -10, RV: 0, RM: 0, RP: 0 },
-  'Nephilim Vetala': { RF: 0, RE: -20, RV: 0, RM: 0, RP: 0 },
-  'Nephilim Turak': { RF: 0, RE: 0, RV: 0, RM: 0, RP: 0 },
-  'Sylvain': { RF: 0, RE: 0, RV: 0, RM: 30, RP: 30 },
-  'Jayán': { RF: 20, RE: 0, RV: 0, RM: -20, RP: 0 },
-  "D'Anjayni": { RF: 0, RE: 0, RV: 0, RM: 0, RP: 0 },
-  'Ebudan': { RF: 0, RE: 0, RV: 0, RM: 0, RP: 0 },
-  'Daimah': { RF: 0, RE: 0, RV: 0, RM: 0, RP: 0 },
-  "Duk'zarist": { RF: 20, RE: 15, RV: 15, RM: 15, RP: 15 },
-  'Devah': { RF: -10, RE: -10, RV: 0, RM: 0, RP: 0 },
-  'Vetala': { RF: 0, RE: 0, RV: 0, RM: 0, RP: 0 },
-  'Tuan Dalyr': { RF: 0, RE: 0, RV: 0, RM: 0, RP: 0 },
-  'Turak': { RF: 0, RE: 0, RV: 0, RM: 0, RP: 0 },
-  'Criatura': { RF: 0, RE: 0, RV: 0, RM: 0, RP: 0 },
-}
-
-// Categorías
+// Categorías (lista oficial del Excel, orden de la hoja Tablas)
 export const CATEGORIAS = [
   'Guerrero', 'Guerrero Acróbata', 'Paladín', 'Paladín Oscuro',
-  'Maestro de Armas', 'Tecnicista', 'Explorador', 'Sombra',
-  'Ladrón', 'Asesino', 'Cazador de Sombras', 'Ocultista',
-  'Místico', 'Warlock', 'Iluminado', 'Tao', 'Conjurador',
-  'Mentalista', 'Guerrero Místico', 'Explorador Místico',
-  'Hechicero', 'Brujo', 'Novel'
+  'Maestro de Armas', 'Tecnicista', 'Tao', 'Explorador', 'Sombra',
+  'Ladrón', 'Asesino',
+  'Hechicero', 'Warlock', 'Ilusionista', 'Hechicero Mentalista',
+  'Conjurador', 'Guerrero Conjurador', 'Mentalista', 'Guerrero Mentalista',
+  'Novel'
 ]
 
 // Habilidades secundarias con su penalización natural base
@@ -1252,8 +1227,336 @@ export const ACT_BASE_POD = {
   11: 10, 12: 15, 13: 15, 14: 15, 15: 20, 16: 25, 17: 25, 18: 30, 19: 30, 20: 35
 }
 
-// Helper: get category data (handles missing gracefully)
+// Helper: get category data
 export const getCatData = (categoria) => CATEGORIAS_DATA[categoria] || {}
 
-// Helper: PDs base per level (400 for everyone currently — Excel uses 600 for some)
-export const PDS_POR_NIVEL = 600
+// PDs por nivel: nivel 0 → 400, nivel 1 → 600, nivel 2+ → 600 + (nivel-1)×100
+export const getPdsPorNivel = (nivel) => {
+  if (nivel <= 0) return 400
+  if (nivel === 1) return 600
+  return 600 + (nivel - 1) * 100
+}
+
+// Mapping: habilidad secundaria name → CATEGORIAS_DATA Plus key
+export const HAB_SEC_PLUS_KEYS = {
+  // Atléticas
+  'Acrobacias': 'PlusAcrobacias',
+  'Atletismo':  'PlusAtletismo',
+  'Saltar':     'PlusSaltar',
+  // 'Trucos' no existe en HABILIDADES_SECUNDARIAS — mapeado a T. Manos provisionalmente
+  'T. Manos':   'PlusTrucos',
+  // Sociales
+  'Estilo':     'PlusEstilo',
+  'Intimidar':  'PlusIntimidar',
+  'Liderazgo':  'PlusLiderazgo',
+  'Persuasión': 'PlusPersuasion',
+  // Percepción
+  'Advertir':   'PlusAdvertir',
+  'Buscar':     'PlusBuscar',
+  'Rastrear':   'PlusRastrear',
+  // Intelectuales
+  'Animales':   'PlusAnimales',
+  'Herbolaria': 'PlusHerbolaria',
+  'Ocultismo':  'PlusOcultismo',
+  'V. Mágica':  'PlusValMagica',
+  // Vigor
+  'Frialdad':   'PlusFrialdad',
+  'Res. Dolor': 'PlusResisDolor',
+  // Subterfugio
+  'Disfraz':    'PlusDisfraz',
+  'Ocultarse':  'PlusOcultarse',
+  'Robo':       'PlusRobo',
+  'Sigilo':     'PlusSigilo',
+  'Trampería':  'PlusTramperia',
+  'Venenos':    'PlusVenenos',
+  // Especiales
+  'P. Fuerza':  'PlusProezas',
+}
+
+// Resistencias: stat que determina el bono base de cada resistencia
+export const RESISTENCIA_STAT = {
+  presBase: null,   // base fija = 20 (sin stat)
+  RF:  'CON',
+  RE:  'CON',
+  RV:  'CON',
+  RM:  'POD',
+  RP:  'VOL',
+}
+
+// Acciones por turno según DES+AGI (Tabla 37, pág.81 — extraída del Excel)
+export const ACCIONES_TURNO = (desAgi) => {
+  if (desAgi <= 10) return 1
+  if (desAgi <= 14) return 2
+  if (desAgi <= 19) return 3
+  if (desAgi <= 22) return 4
+  if (desAgi <= 25) return 5
+  if (desAgi <= 28) return 6
+  if (desAgi <= 31) return 8
+  return 10
+}
+
+// Acumulación de Ki base por característica (Tabla de Acumulación — extraída del Excel)
+export const ACU_KI_TABLE = {
+  1:1,2:1,3:1,4:1,5:1,6:1,7:1,8:1,9:1,
+  10:2,11:2,12:2,
+  13:3,14:3,15:3,
+  16:4,17:4,18:4,19:4,20:4,
+}
+export const getAcuKi = (stat) => ACU_KI_TABLE[Math.min(Math.max(stat, 1), 20)] || 1
+
+// Habilidades de combate calculadas desde PDsTab + bono categoría
+// Devuelve { ataque, esquiva, parada, armadura } con el valor de PDs×5 + bonoCat×nivel
+export const getHabCombateCalc = (char, catData) => {
+  const pdNiveles = char?.pds?.niveles || []
+  const nivel = parseInt(char?.nivel) || 0
+  const sumPDs = (skill) => pdNiveles.reduce((sum, n) => sum + (parseInt(n?.combate?.[skill]) || 0), 0)
+  return {
+    ataque:   sumPDs('H. Ataque')       * 5 + (catData.PlusHA       || 0) * nivel,
+    esquiva:  sumPDs('H. Esquiva')      * 5 + (catData.PlusHE       || 0) * nivel,
+    parada:   sumPDs('H. Parada')       * 5 + (catData.PlusHP       || 0) * nivel,
+    armadura: sumPDs('Llevar Armadura') * 5 + (catData.PlusLL_Armor || 0) * nivel,
+  }
+}
+
+// Tabla de bonificadores raciales (extraída del Excel - Tabla Características Raciales)
+// Campos: RF,RE,RV,RM,RP (bonos res.), AGI..VOL (bonos stats), AjusteNivel, Tamano, Regen, Cansancio, Natura
+//         habSec: bonos planos a habilidades secundarias (pendiente verificar valores vs. Excel)
+//         capacidades: poderes/rasgos automáticos de la raza
+export const RAZAS_DATA = {
+  'Humano': {
+    RF:0, RE:0, RV:0, RM:0, RP:0, AjusteNivel:0,
+    AGI:0, CON:0, DES:0, FUE:0, INT:0, PER:0, POD:0, VOL:0,
+    Tamano:0, Regen:0, Cansancio:0, Natura:0,
+    habSec: {},
+    capacidades: ['Puntos de Creación extra (3)', 'Puntos de Destino (1)'],
+  },
+  'Nephilim Sylvain': {
+    RF:5, RE:20, RV:5, RM:10, RP:10, AjusteNivel:0,
+    AGI:0, CON:0, DES:0, FUE:0, INT:0, PER:0, POD:0, VOL:0,
+    Tamano:0, Regen:1, Cansancio:0, Natura:0,
+    habSec: {},
+    capacidades: ['Herencia Sylvain: resistencias elevadas', 'Regeneración +1'],
+  },
+  'Nephilim Jayán': {
+    RF:15, RE:0, RV:0, RM:-10, RP:0, AjusteNivel:0,
+    AGI:0, CON:0, DES:0, FUE:1, INT:0, PER:0, POD:0, VOL:0,
+    Tamano:2, Regen:0, Cansancio:1, Natura:0,
+    habSec: {},
+    capacidades: ['Herencia Jayán: Tamaño +2, FUE +1, Cansancio +1'],
+  },
+  "Nephilim D'Anjayni": {
+    RF:0, RE:0, RV:0, RM:0, RP:0, AjusteNivel:0,
+    AGI:0, CON:0, DES:0, FUE:0, INT:0, PER:0, POD:0, VOL:0,
+    Tamano:0, Regen:0, Cansancio:0, Natura:0,
+    habSec: {},
+    capacidades: ["Herencia D'Anjayni: Natura 5 (parcial)"],
+  },
+  'Nephilim Ebudan': {
+    RF:0, RE:0, RV:0, RM:0, RP:0, AjusteNivel:0,
+    AGI:0, CON:0, DES:0, FUE:0, INT:0, PER:0, POD:0, VOL:0,
+    Tamano:0, Regen:0, Cansancio:0, Natura:0,
+    habSec: {},
+    capacidades: ['Herencia Ebudan: Natura 10 (parcial)'],
+  },
+  'Nephilim Daimah': {
+    RF:0, RE:0, RV:0, RM:0, RP:0, AjusteNivel:0,
+    AGI:0, CON:0, DES:0, FUE:0, INT:0, PER:0, POD:0, VOL:0,
+    Tamano:-1, Regen:0, Cansancio:0, Natura:0,
+    habSec: {},
+    capacidades: ['Herencia Daimah: Tamaño -1'],
+  },
+  "Nephilim Duk'zarist": {
+    RF:20, RE:15, RV:15, RM:15, RP:15, AjusteNivel:0,
+    AGI:0, CON:0, DES:0, FUE:0, INT:0, PER:0, POD:0, VOL:0,
+    Tamano:0, Regen:1, Cansancio:0, Natura:0,
+    habSec: {},
+    capacidades: ["Herencia Duk'zarist: resistencias superiores, Regeneración +1"],
+  },
+  'Nephilim Devah': {
+    RF:-10, RE:-10, RV:0, RM:0, RP:0, AjusteNivel:0,
+    AGI:0, CON:0, DES:0, FUE:0, INT:0, PER:0, POD:0, VOL:0,
+    Tamano:0, Regen:0, Cansancio:0, Natura:0,
+    habSec: {},
+    capacidades: ['Herencia Devah: penalización RF/RE, afinidad mágica latente'],
+  },
+  'Nephilim Vetala': {
+    RF:0, RE:-20, RV:0, RM:0, RP:0, AjusteNivel:0,
+    AGI:0, CON:0, DES:0, FUE:0, INT:0, PER:0, POD:0, VOL:0,
+    Tamano:0, Regen:0, Cansancio:0, Natura:0,
+    habSec: {},
+    capacidades: ['Herencia Vetala: penalización RE, rasgos vampíricos latentes'],
+  },
+  'Nephilim Turak': {
+    RF:0, RE:0, RV:0, RM:0, RP:0, AjusteNivel:0,
+    AGI:0, CON:0, DES:0, FUE:0, INT:0, PER:0, POD:0, VOL:0,
+    Tamano:0, Regen:0, Cansancio:0, Natura:0,
+    habSec: {},
+    capacidades: ['Herencia Turak'],
+  },
+  'Sylvain': {
+    RF:0, RE:0, RV:0, RM:30, RP:30, AjusteNivel:2,
+    AGI:1, CON:-1, DES:1, FUE:-1, INT:1, PER:0, POD:1, VOL:0,
+    Tamano:0, Regen:3, Cansancio:0, Natura:5,
+    habSec: {'Advertir': 10, 'Buscar': 10, 'Acrobacias': 10},
+    capacidades: [
+      'Visión del Alma: perciben flujo de Ki y Zeón',
+      'Regeneración acelerada (índice +3)',
+      'Comunión con la Naturaleza (Natura 5)',
+      'RM/RP +30',
+    ],
+  },
+  'Jayán': {
+    RF:20, RE:0, RV:0, RM:-20, RP:0, AjusteNivel:1,
+    AGI:0, CON:1, DES:0, FUE:2, INT:0, PER:0, POD:-1, VOL:0,
+    Tamano:2, Regen:0, Cansancio:3, Natura:0,
+    habSec: {'Intimidar': 10, 'P. Fuerza': 20},
+    capacidades: [
+      'Talla de Gigante (Tamaño +2)',
+      'Cansancio excepcional (+3)',
+      'FUE +2, CON +1',
+      'RM -20',
+    ],
+  },
+  "D'Anjayni": {
+    RF:0, RE:0, RV:0, RM:0, RP:0, AjusteNivel:1,
+    AGI:0, CON:0, DES:0, FUE:0, INT:0, PER:0, POD:0, VOL:0,
+    Tamano:0, Regen:0, Cansancio:0, Natura:5,
+    habSec: {'Ocultarse': 20, 'Sigilo': 20},
+    capacidades: [
+      'Invisibilidad natural en oscuridad total',
+      'Vínculo con el Caos',
+      'Natura 5',
+    ],
+  },
+  'Ebudan': {
+    RF:0, RE:0, RV:0, RM:0, RP:0, AjusteNivel:1,
+    AGI:0, CON:0, DES:0, FUE:0, INT:0, PER:0, POD:0, VOL:0,
+    Tamano:0, Regen:0, Cansancio:0, Natura:10,
+    habSec: {'Animales': 20, 'Herbolaria': 10},
+    capacidades: [
+      'Comunión con la Naturaleza (Natura 10)',
+      'Pacto con los espíritus animales',
+    ],
+  },
+  'Daimah': {
+    RF:0, RE:0, RV:0, RM:0, RP:0, AjusteNivel:1,
+    AGI:1, CON:-1, DES:1, FUE:0, INT:0, PER:0, POD:0, VOL:-1,
+    Tamano:-1, Regen:0, Cansancio:0, Natura:5,
+    habSec: {'Acrobacias': 10, 'Saltar': 10, 'Trepar': 10, 'Sigilo': 10},
+    capacidades: [
+      'Pequeño (Tamaño -1)',
+      'Control climático local (menor)',
+      'Comunión Natural (Natura 5)',
+      'AGI +1, DES +1',
+    ],
+  },
+  "Duk'zarist": {
+    RF:20, RE:15, RV:15, RM:15, RP:15, AjusteNivel:3,
+    AGI:1, CON:1, DES:1, FUE:1, INT:1, PER:1, POD:1, VOL:1,
+    Tamano:0, Regen:5, Cansancio:0, Natura:5,
+    habSec: {'Advertir': 10, 'Buscar': 10, 'Ocultarse': 10, 'Sigilo': 10},
+    capacidades: [
+      'Inmunidad al calor y frío extremo',
+      'Visión infrarroja y en oscuridad total',
+      'Todos los stats +1',
+      'Regeneración excepcional (+5)',
+      'Resistencias superiores (+15–20 a todas)',
+      'Natura 5',
+    ],
+  },
+  'Devah': {
+    RF:-10, RE:-10, RV:0, RM:0, RP:0, AjusteNivel:2,
+    AGI:0, CON:-2, DES:0, FUE:-1, INT:1, PER:0, POD:1, VOL:1,
+    Tamano:-1, Regen:0, Cansancio:0, Natura:5,
+    habSec: {'V. Mágica': 10, 'Ocultismo': 10},
+    capacidades: [
+      'Levitación / Vuelo menor innato',
+      'Afinidad Mística innata (POD +1, INT +1)',
+      'Constitución frágil (CON -2, FUE -1, Tamaño -1)',
+      'RF/RE -10',
+      'Natura 5',
+    ],
+  },
+  'Vetala': {
+    RF:0, RE:0, RV:0, RM:0, RP:0, AjusteNivel:2,
+    AGI:0, CON:0, DES:0, FUE:0, INT:0, PER:0, POD:0, VOL:0,
+    Tamano:0, Regen:0, Cansancio:0, Natura:5,
+    habSec: {'Ocultarse': 20, 'Sigilo': 20},
+    capacidades: [
+      'Camuflaje natural en la oscuridad',
+      'Vulnerabilidad a la luz solar directa',
+      'Rasgos vampíricos (hambre de sangre, etc.)',
+      'Natura 5',
+    ],
+  },
+  'Tuan Dalyr': {
+    RF:0, RE:0, RV:0, RM:0, RP:0, AjusteNivel:2,
+    AGI:0, CON:0, DES:0, FUE:0, INT:0, PER:1, POD:0, VOL:0,
+    Tamano:0, Regen:0, Cansancio:0, Natura:0,
+    habSec: {'Advertir': 20, 'Buscar': 20, 'Rastrear': 10},
+    capacidades: [
+      'Visión de 360° (no pueden ser flanqueados)',
+      'Detector de engaños innato',
+      'PER +1',
+    ],
+  },
+  'Turak': {
+    RF:0, RE:0, RV:0, RM:0, RP:0, AjusteNivel:2,
+    AGI:0, CON:1, DES:0, FUE:1, INT:-1, PER:0, POD:0, VOL:0,
+    Tamano:0, Regen:1, Cansancio:0, Natura:0,
+    habSec: {'Atletismo': 10, 'Intimidar': 10, 'P. Fuerza': 10},
+    capacidades: [
+      'Adaptación a climas extremos (calor y frío)',
+      'Regeneración mejorada (+1 índice)',
+      'FUE +1, CON +1',
+    ],
+  },
+  'Criatura': {
+    RF:0, RE:0, RV:0, RM:0, RP:0, AjusteNivel:0,
+    AGI:0, CON:0, DES:0, FUE:0, INT:0, PER:0, POD:0, VOL:0,
+    Tamano:0, Regen:0, Cansancio:0, Natura:0,
+    habSec: {},
+    capacidades: [],
+  },
+}
+export const getRazaData = (raza) => RAZAS_DATA[raza] || {}
+
+// Mapping habilidad secundaria → group cost key (for PDs cost calculation)
+const SEC_GROUP_COST = {
+  'Atléticas':    'CosteAtleticas',
+  'Sociales':     'CosteSociales',
+  'Percepción':   'CostePercepc',
+  'Intelectuales':'CosteIntelectu',
+  'Vigor':        'CosteVigor',
+  'Subterfugio':  'CosteSubter',
+  'Creativas':    'CosteCreativa',
+}
+export const SEC_SKILL_COST_KEY = {}
+Object.entries(HABILIDADES_SECUNDARIAS).forEach(([cat, habs]) => {
+  Object.keys(habs).forEach(skill => { SEC_SKILL_COST_KEY[skill] = SEC_GROUP_COST[cat] })
+})
+
+// Calculate total PDs spent across all levels for a char (mirrors PDsTab logic)
+export const calcPDsGastados = (char, catData) => {
+  const pdNiveles = char?.pds?.niveles || []
+  const getCost = (key) => catData[key] || 2
+  const COMBATE_KEYS  = { 'H. Ataque':'CosteHA','H. Esquiva':'CosteHE','H. Parada':'CosteHP','Llevar Armadura':'CosteLL_Armor','Tablas de Armas':'CosteHA','Tablas de Estilos':'CosteHA','Artes Marciales':'CosteHA' }
+  const KI_KEYS       = { 'Puntos de KI':'CosteKi','Acumulación de KI':'CosteAcuKi','CM':'CosteKi' }
+  const MISTICO_KEYS  = { 'Zeón':'CosteZeon','Nivel de Magia':'CosteZeon','Proyección Mágica':'CosteProy_Mag','Convocar':'CosteConvocar','Dominar':'CosteDominar','Atar':'CosteAtar','Desconvocar':'CosteDesconv' }
+  const PSIQUICO_KEYS = { 'CVs':'CosteCV','Proyección Psíquica':'CosteProy_Psi' }
+
+  let total = 0
+  for (const n of pdNiveles) {
+    if (!n) continue
+    Object.entries(COMBATE_KEYS).forEach(([s,k]) => { total += (parseInt(n.combate?.[s])||0) * getCost(k) })
+    Object.entries(KI_KEYS).forEach(([s,k]) => { total += (parseInt(n.ki?.[s])||0) * getCost(k) })
+    Object.entries(MISTICO_KEYS).forEach(([s,k]) => { total += (parseInt(n.mistico?.[s])||0) * getCost(k) })
+    Object.entries(PSIQUICO_KEYS).forEach(([s,k]) => { total += (parseInt(n.psiquico?.[s])||0) * getCost(k) })
+    Object.entries(n.secundarias || {}).forEach(([s, pts]) => {
+      const costKey = SEC_SKILL_COST_KEY[s] || 'CosteAtleticas'
+      total += (parseInt(pts)||0) * getCost(costKey)
+    })
+    total += parseInt(n.caracteristicas?.pdsGastados) || 0
+  }
+  return total
+}

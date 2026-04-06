@@ -1,5 +1,7 @@
 import React from 'react'
 import useCharacterStore from '../../store/useCharacterStore'
+import { getCatData, getHabCombateCalc } from '../../data/tables'
+import CollapsiblePanel from '../CollapsiblePanel'
 
 const F = ({ label, children, w = 'flex-1' }) => (
   <div className={`${w} flex flex-col gap-0.5`}>
@@ -8,9 +10,19 @@ const F = ({ label, children, w = 'flex-1' }) => (
   </div>
 )
 
-const WeaponBlock = ({ title, wKey, char, set }) => {
+const WeaponBlock = ({ title, wKey, char, set, habCalc, totalMod }) => {
   const w = char.armas?.[wKey] || {}
   const upd = (field, val) => set(`armas.${wKey}.${field}`, val)
+
+  // Totales del personaje con esta arma
+  const cal = parseInt(w.calidad) || 0
+  const habAtq = habCalc.ataque + (parseInt(char.habilidadesCombate?.ataque?.esp) || 0)
+  const habPar = habCalc.parada + (parseInt(char.habilidadesCombate?.parada?.esp) || 0)
+  const habEsq = habCalc.esquiva + (parseInt(char.habilidadesCombate?.esquiva?.esp) || 0)
+  const esqOpar = (w.tipoDefensa || 'Par') === 'Par' ? habPar : habEsq
+  const totalAtq = habAtq + (parseInt(w.ataque) || 0) + cal + totalMod
+  const totalDef = esqOpar + (parseInt(w.defensa) || 0) + cal + totalMod
+
   return (
     <div className="panel">
       <div className="panel-title">{title}</div>
@@ -26,14 +38,25 @@ const WeaponBlock = ({ title, wKey, char, set }) => {
         </div>
         <div className="flex gap-1">
           <F label="Turno" w="w-14"><input type="number" value={w.turno ?? 0} onChange={e => upd('turno', +e.target.value)} /></F>
-          <F label="Ataque" w="w-14"><input type="number" value={w.ataque ?? 0} onChange={e => upd('ataque', +e.target.value)} /></F>
-          <F label="Defensa" w="w-14"><input type="number" value={w.defensa ?? 0} onChange={e => upd('defensa', +e.target.value)} /></F>
+          <F label="+Ataque" w="w-14"><input type="number" value={w.ataque ?? 0} onChange={e => upd('ataque', +e.target.value)} /></F>
+          <F label="+Defensa" w="w-14"><input type="number" value={w.defensa ?? 0} onChange={e => upd('defensa', +e.target.value)} /></F>
           <F label="Tipo Def.">
             <select value={w.tipoDefensa || 'Par'} onChange={e => upd('tipoDefensa', e.target.value)}>
               <option>Par</option><option>Esq</option>
             </select>
           </F>
           <F label="Daño" w="w-14"><input type="number" value={w.dano ?? 0} onChange={e => upd('dano', +e.target.value)} /></F>
+        </div>
+        {/* Totales calculados */}
+        <div className="flex gap-1 border-t border-[#2a1f10] pt-1 mt-0.5">
+          <div className="flex-1 flex items-center gap-1">
+            <span className="text-[#4a3520] text-xs">Total Atq:</span>
+            <span className="calc-value text-sm font-bold text-[#c9a84c] px-2">{totalAtq}</span>
+          </div>
+          <div className="flex-1 flex items-center gap-1">
+            <span className="text-[#4a3520] text-xs">Total {w.tipoDefensa || 'Par'}:</span>
+            <span className="calc-value text-sm font-bold text-[#c9a84c] px-2">{totalDef}</span>
+          </div>
         </div>
         <div className="flex gap-1">
           <F label="Crit.1"><input value={w.crit1 || ''} onChange={e => upd('crit1', e.target.value)} /></F>
@@ -59,7 +82,7 @@ const WeaponBlock = ({ title, wKey, char, set }) => {
   )
 }
 
-const ListPanel = ({ title, listKey, char, set, fields }) => {
+const ListPanel = ({ title, listKey, char, set, fields, defaultOpen = true }) => {
   const list = char[listKey] || []
   const addRow = () => {
     const template = {}
@@ -73,11 +96,7 @@ const ListPanel = ({ title, listKey, char, set, fields }) => {
     set(listKey, next)
   }
   return (
-    <div className="panel">
-      <div className="panel-title flex items-center justify-between">
-        <span>{title}</span>
-        <button className="add-row-btn" onClick={addRow}>+ Añadir</button>
-      </div>
+    <CollapsiblePanel title={title} defaultOpen={defaultOpen} actions={<button className="add-row-btn" onClick={addRow}>+ Añadir</button>}>
       {list.length > 0 && (
         <table className="w-full text-xs">
           <thead>
@@ -102,7 +121,7 @@ const ListPanel = ({ title, listKey, char, set, fields }) => {
           </tbody>
         </table>
       )}
-    </div>
+    </CollapsiblePanel>
   )
 }
 
@@ -112,6 +131,12 @@ export default function CombateTab({ char }) {
 
   const mod = char.modificadoresCombate || {}
   const totalMod = (parseInt(mod.penDolor) || 0) + (parseInt(mod.penCansancio) || 0) + (parseInt(mod.penFisico) || 0) + (parseInt(mod.bonoEsp1) || 0) + (parseInt(mod.bonoEsp2) || 0)
+
+  // Pen. General auto-calculada como Σ(rMov de armaduras)
+  const penGeneralCalc = (char.armaduras || []).reduce((sum, a) => sum + (parseInt(a.rMov) || 0), 0)
+
+  const catData = getCatData(char.categoria)
+  const habCalc = getHabCombateCalc(char, catData)
 
   const addArmadura = () => {
     const list = [...(char.armaduras || [])]
@@ -175,7 +200,9 @@ export default function CombateTab({ char }) {
           <F label="Rest. Movimiento" w="w-32"><input type="number" value={char.restriccionMovimiento ?? 0} onChange={e => set('restriccionMovimiento', +e.target.value)} /></F>
           <F label="Requisito" w="w-24"><input type="number" value={char.requisito ?? 0} onChange={e => set('requisito', +e.target.value)} /></F>
           <F label="Req. Natural" w="w-24"><input type="number" value={char.requisitoNatural ?? 0} onChange={e => set('requisitoNatural', +e.target.value)} /></F>
-          <F label="Pen. General" w="w-24"><input type="number" value={char.penGeneral ?? 0} onChange={e => set('penGeneral', +e.target.value)} /></F>
+          <F label="Pen. General (Σ R.Mov)" w="w-36">
+            <span className={`calc-value text-center ${penGeneralCalc > 0 ? 'text-red-400' : ''}`}>{penGeneralCalc}</span>
+          </F>
           <F label="Pen. Natural" w="w-24"><input type="number" value={char.penNaturalArmadura ?? 0} onChange={e => set('penNaturalArmadura', +e.target.value)} /></F>
         </div>
       </div>
@@ -244,28 +271,28 @@ export default function CombateTab({ char }) {
 
       {/* ── Armas ── */}
       <div className="grid grid-cols-2 gap-3">
-        <WeaponBlock title="Sin Armas / Desarmado" wKey="sinArmas" char={char} set={set} />
-        <WeaponBlock title="Arma Principal" wKey="arma1" char={char} set={set} />
-        <WeaponBlock title="Arma Adicional 1" wKey="adicional1" char={char} set={set} />
-        <WeaponBlock title="Arma Principal 2" wKey="arma2" char={char} set={set} />
-        <WeaponBlock title="Arma Adicional 2" wKey="adicional2" char={char} set={set} />
-        <WeaponBlock title="A 2 Manos" wKey="dosManos" char={char} set={set} />
-        <WeaponBlock title="Arma de Disparo" wKey="disparo" char={char} set={set} />
+        <WeaponBlock title="Sin Armas / Desarmado" wKey="sinArmas" char={char} set={set} habCalc={habCalc} totalMod={totalMod} />
+        <WeaponBlock title="Arma Principal" wKey="arma1" char={char} set={set} habCalc={habCalc} totalMod={totalMod} />
+        <WeaponBlock title="Arma Adicional 1" wKey="adicional1" char={char} set={set} habCalc={habCalc} totalMod={totalMod} />
+        <WeaponBlock title="Arma Principal 2" wKey="arma2" char={char} set={set} habCalc={habCalc} totalMod={totalMod} />
+        <WeaponBlock title="Arma Adicional 2" wKey="adicional2" char={char} set={set} habCalc={habCalc} totalMod={totalMod} />
+        <WeaponBlock title="A 2 Manos" wKey="dosManos" char={char} set={set} habCalc={habCalc} totalMod={totalMod} />
+        <WeaponBlock title="Arma de Disparo" wKey="disparo" char={char} set={set} habCalc={habCalc} totalMod={totalMod} />
       </div>
 
       {/* ── Tablas y Capacidades ── */}
       <div className="grid grid-cols-2 gap-3">
-        <ListPanel title="Tablas de Armas" listKey="tablasArmas" char={char} set={set}
+        <ListPanel title="Tablas de Armas" listKey="tablasArmas" char={char} set={set} defaultOpen={false}
           fields={[{ key: 'nombre', label: 'Nombre' }, { key: 'descripcion', label: 'Descripción' }]} />
-        <ListPanel title="Tablas de Estilos" listKey="tablasEstilos" char={char} set={set}
+        <ListPanel title="Tablas de Estilos" listKey="tablasEstilos" char={char} set={set} defaultOpen={false}
           fields={[{ key: 'nombre', label: 'Nombre' }, { key: 'descripcion', label: 'Descripción' }]} />
-        <ListPanel title="Artes Marciales" listKey="artesMarciales" char={char} set={set}
+        <ListPanel title="Artes Marciales" listKey="artesMarciales" char={char} set={set} defaultOpen={false}
           fields={[{ key: 'nombre', label: 'Nombre' }, { key: 'descripcion', label: 'Descripción' }]} />
-        <ListPanel title="Ars Magnus" listKey="arsMagnus" char={char} set={set}
+        <ListPanel title="Ars Magnus" listKey="arsMagnus" char={char} set={set} defaultOpen={false}
           fields={[{ key: 'nombre', label: 'Nombre' }, { key: 'descripcion', label: 'Descripción' }]} />
       </div>
 
-      <ListPanel title="Capacidades de Combate" listKey="capacidadesCombate" char={char} set={set}
+      <ListPanel title="Capacidades de Combate" listKey="capacidadesCombate" char={char} set={set} defaultOpen={false}
         fields={[{ key: 'nombre', label: 'Nombre' }, { key: 'descripcion', label: 'Descripción' }]} />
     </div>
   )
