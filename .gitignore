@@ -3,3 +3,12 @@ dist/
 .env
 .env.local
 .env.*.local
+
+# Artefactos de desarrollo/pruebas
+test_*.png
+test_*.pdf
+page*_preview.png
+page*_grid.png
+p1_*.png
+cat_*.json
+cat_output.js
